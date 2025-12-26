@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistant Paysagiste Pro - Complet</title>
+    <style>
+        :root { --primary: #2e7d32; --secondary: #66bb6a; --bg-gray: #f5f5f5; --border: #ddd; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg-gray); padding-bottom: 80px; }
+        header { background: var(--primary); color: white; padding: 10px; text-align: center; }
+        
+        .tabs-nav { display: flex; background: white; overflow-x: auto; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 5000; }
+        .tab-btn { flex: 1; min-width: 110px; padding: 15px 5px; border: none; background: white; cursor: pointer; font-weight: 600; color: #555; font-size: 0.85rem; }
+        .tab-btn.active-tab { color: var(--primary); border-bottom: 3px solid var(--primary); background: #e8f5e9; }
+
+        .container { max-width: 900px; margin: 15px auto; padding: 0 10px; }
+        .tab-content { display: none; animation: fadeEffect 0.3s; }
+        .tab-content.show-content { display: block; }
+
+        @keyframes fadeEffect { from {opacity: 0;} to {opacity: 1;} }
+
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        h2 { color: var(--primary); font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 0; }
+        
+        .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+        .col { flex: 1; min-width: 200px; }
+        label { display: block; margin-bottom: 5px; font-size: 0.75rem; font-weight: bold; color: #333; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; font-size: 0.95rem; }
+
+        /* TRAVAUX */
+        .work-item { border-left: 5px solid var(--secondary); background: #fafafa; margin-bottom: 10px; padding: 10px; border-radius: 4px; }
+        .btn-add { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; margin-bottom: 10px; }
+        .btn-del { background: #d32f2f; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-top: 5px; }
+
+        /* PLAN */
+        #canvas-area { height: 65vh; background: white; background-image: radial-gradient(#ccc 1px, transparent 1px); background-size: 20px 20px; border: 2px dashed #999; border-radius: 8px; position: relative; overflow: hidden; touch-action: none; }
+        .toolbar { display: flex; gap: 5px; overflow-x: auto; padding: 10px 0; }
+        .tool { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border: 1px solid #ccc; border-radius: 5px; cursor: pointer; background: white; font-size: 20px; flex-shrink: 0; }
+        .map-obj { position: absolute; cursor: move; min-width: 40px; min-height: 40px; display: flex; align-items: center; justify-content: center; padding: 5px; resize: both; overflow: hidden; font-weight: bold; font-size: 0.8rem; z-index: 10; border: 1px dashed transparent; }
+        .map-obj:hover { border-color: blue; }
+        .style-text { background: rgba(255,255,255,0.85); border: 1px solid #999; z-index: 500; min-width: 80px; }
+        .style-arbre { background: rgba(76, 175, 80, 0.7); border-radius: 50%; color: white; }
+        .style-massif { background: rgba(233, 30, 99, 0.3); border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+        .style-dur { background: #bdbdbd; border-radius: 2px; }
+        .style-pelouse { background: rgba(129, 199, 132, 0.4); border: 1px solid green; }
+        .style-friche { background: repeating-linear-gradient(45deg, #ffe082, #ffe082 10px, #fff 10px, #fff 20px); }
+        .style-chemin { background: #d7ccc8; border-bottom: 2px dashed #5d4037; }
+
+        /* ARCHIVES */
+        .archive-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; background: white; margin-bottom: 5px; border-radius: 4px; }
+        .archive-btn { background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
+
+        /* FLOATING ACTIONS */
+        .actions-bar { position: fixed; bottom: 15px; right: 15px; display: flex; gap: 10px; z-index: 6000; }
+        .fab { width: 55px; height: 55px; border-radius: 50%; border: none; color: white; font-size: 24px; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
+        .btn-save { background: #1976d2; }
+        .btn-print { background: #333; }
+
+        @media print {
+            .tabs-nav, .actions-bar, .toolbar, .btn-add, .btn-del { display: none !important; }
+            .tab-content { display: block !important; page-break-inside: avoid; border-bottom: 1px solid #eee; margin-bottom: 20px; }
+            #canvas-area { height: 13cm; border: 2px solid #000; page-break-before: always; }
+        }
+    </style>
+</head>
+<body>
+
+<header><h1>Relevé de Chantier Paysager</h1></header>
+
+<div class="tabs-nav">
+    <button class="tab-btn active-tab" onclick="switchTab('tab-client', this)">1. Client</button>
+    <button class="tab-btn" onclick="switchTab('tab-doleances', this)">2. Doléances</button>
+    <button class="tab-btn" onclick="switchTab('tab-station', this)">3. Sol/Station</button>
+    <button class="tab-btn" onclick="switchTab('tab-travaux', this)">4. Travaux</button>
+    <button class="tab-btn" onclick="switchTab('tab-plan', this)">5. Plan</button>
+    <button class="tab-btn" onclick="switchTab('tab-archives', this)" style="background: #fff3e0;">📁 Archives</button>
+</div>
+
+<div class="container">
+    <div id="tab-client" class="tab-content show-content">
+        <div class="card">
+            <h2>Client & Dates</h2>
+            <div class="row">
+                <div class="col"><label>Nom Client</label><input type="text" id="c_nom"></div>
+                <div class="col"><label>Tél</label><input type="tel" id="c_tel"></div>
+            </div>
+            <div class="row">
+                <div class="col"><label>Date de Visite</label><input type="date" id="c_date_v"></div>
+                <div class="col"><label>Date Chantier Souhaitée</label><input type="date" id="c_date_c"></div>
+            </div>
+            <label>Adresse</label><input type="text" id="c_adr">
+        </div>
+        <div class="card">
+            <h2>Logistique & Accès</h2>
+            <div class="row">
+                <div class="col">
+                    <label>Stationnement</label>
+                    <select id="l_stat">
+                        <option>Facile / Devant</option>
+                        <option>Difficile / Rue étroite</option>
+                        <option>Éloigné (> 20 mètres)</option>
+                        <option>Payant</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label>Réseaux Apparents</label>
+                    <select id="l_res">
+                        <option>Aucun visible</option>
+                        <option>Câbles au sol</option>
+                        <option>Tuyaux arrosage surface</option>
+                        <option>Bornes / Regards ouverts</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label>Gestion Déchets</label>
+                    <select id="l_dech">
+                        <option>Évacuation Déchetterie</option>
+                        <option>Broyage sur place</option>
+                        <option>Stockage fond jardin</option>
+                        <option>Bord de route (Ramassage ville)</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label>Largeur Passage</label>
+                    <select id="l_pass">
+                        <option>Standard (> 1m)</option>
+                        <option>Étroit (< 80cm)</option>
+                        <option>Passage Garage</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-doleances" class="tab-content">
+        <div class="card">
+            <h2>Attentes & Contrat</h2>
+            <div class="row">
+                <div class="col">
+                    <label>Type de Contrat</label>
+                    <select id="d_contrat">
+                        <option>Ponctuel</option>
+                        <option>Quinzomadaire (15j)</option>
+                        <option>Trihebdomadaire (3x/sem)</option>
+                        <option>Mensuel</option>
+                        <option>Bimestriel (2 mois)</option>
+                        <option>Trimestriel</option>
+                        <option>Semestriel</option>
+                    </select>
+                </div>
+                <div class="col"><label>Heures/Jours possibles</label><input type="text" id="d_heures" placeholder="Ex: Lundi uniquement..."></div>
+            </div>
+            <label>Doléances Client</label><textarea id="d_notes" placeholder="Objectifs, esthétique..."></textarea>
+            <label>Budget estimé (€)</label><input type="text" id="d_budget">
+        </div>
+    </div>
+
+    <div id="tab-station" class="tab-content">
+        <div class="card">
+            <h2>Terrain</h2>
+            <div class="row">
+                <div class="col">
+                    <label>Topographie</label>
+                    <select id="s_topo">
+                        <option>Plat (0%)</option>
+                        <option>Diversifié (Plat + Talus + Pentes)</option>
+                        <option>Pente douce (<10%)</option>
+                        <option>Pente forte</option>
+                        <option>Talus / Enrochement</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label>Exposition</label>
+                    <select id="s_expo">
+                        <option>Plein Sud</option><option>Ombre portée</option><option>Nord</option><option>Mi-ombre</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <h2>Sol (Agronomie)</h2>
+            <div class="row">
+                <div class="col">
+                    <label>Texture</label>
+                    <select id="s_texture">
+                        <option>Argileux</option><option>Sableux</option><option>Limoneux</option><option>Caillouteux</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label>Compacité</label>
+                    <select id="s_comp">
+                        <option>Meuble</option><option>Normal</option><option>Compact</option><option>Semelle dure</option>
+                    </select>
+                </div>
+            </div>
+            <label>Notes (Ph, Hydromorphie...)</label><textarea id="s_notes"></textarea>
+        </div>
+    </div>
+
+    <div id="tab-travaux" class="tab-content">
+        <div class="card">
+            <h2>Relevé des Prestations</h2>
+            <div id="tasks-list"></div>
+            <button class="btn-add" onclick="addTask()">+ Ajouter une tâche</button>
+        </div>
+    </div>
+
+    <div id="tab-plan" class="tab-content">
+        <div class="card">
+            <div class="toolbar">
+                <div class="tool" onclick="addMapObj('style-text', 'Note')">📝</div>
+                <div class="tool" onclick="addMapObj('style-arbre', '🌳')">🌳</div>
+                <div class="tool" onclick="addMapObj('style-massif', '🌸')">🌸</div>
+                <div class="tool" onclick="addMapObj('style-pelouse', 'Gazon')">🟩</div>
+                <div class="tool" onclick="addMapObj('style-friche', 'Friche')">🌾</div>
+                <div class="tool" onclick="addMapObj('style-dur', 'Bâti')">🏠</div>
+                <div class="tool" onclick="addMapObj('style-chemin', 'Allée')">🛤️</div>
+                <div class="tool" onclick="clearMap()" style="color:red">🗑️</div>
+            </div>
+            <div id="canvas-area"></div>
+        </div>
+    </div>
+
+    <div id="tab-archives" class="tab-content">
+        <div class="card">
+            <h2>Archives Locales</h2>
+            <div id="archive-list"></div>
+        </div>
+    </div>
+</div>
+
+<div class="actions-bar">
+    <button class="fab btn-save" onclick="saveData()" title="Enregistrer">💾</button>
+    <button class="fab btn-print" onclick="window.print()" title="Imprimer">🖨️</button>
+</div>
+
+<script>
+    // NAVIGATION
+    function switchTab(id, btn) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('show-content'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
+        document.getElementById(id).classList.add('show-content');
+        btn.classList.add('active-tab');
+        if(id === 'tab-archives') displayArchives();
+    }
+
+    // GESTION TRAVAUX AVEC FINITIONS
+    function addTask(data = null) {
+        const div = document.createElement('div');
+        div.className = 'work-item';
+        div.innerHTML = `
+            <div class="row">
+                <div class="col">
+                    <label>Type</label>
+                    <select class="t-type" onchange="updateSub(this)">
+                        <option value="taille" ${data?.type=='taille'?'selected':''}>Taille</option>
+                        <option value="tonte" ${data?.type=='tonte'?'selected':''}>Tonte</option>
+                        <option value="debrou" ${data?.type=='debrou'?'selected':''}>Débroussaillage</option>
+                        <option value="creation" ${data?.type=='creation'?'selected':''}>Création</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label>Finition</label>
+                    <select class="t-fin"><option>${data?.fin || 'Standard'}</option></select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col"><input type="number" class="t-qty" value="${data?.qty||''}" placeholder="Qté"></div>
+                <div class="col">
+                    <select class="t-unit">
+                        <option ${data?.unit=='m²'?'selected':''}>m²</option>
+                        <option ${data?.unit=='ml'?'selected':''}>ml</option>
+                        <option ${data?.unit=='U'?'selected':''}>U</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn-del" onclick="this.parentElement.remove()">Supprimer</button>
+        `;
+        document.getElementById('tasks-list').appendChild(div);
+    }
+
+    function updateSub(sel) {
+        const fin = sel.parentElement.nextElementSibling.querySelector('.t-fin');
+        const opts = {
+            taille: ["Entretien", "Rabattage", "Topiaire"],
+            tonte: ["Mulching", "Ramassage"],
+            debrou: ["Fauchage", "Mise à blanc", "Fil"],
+            creation: ["Plantation", "Engazonnement"]
+        };
+        fin.innerHTML = "";
+        (opts[sel.value] || ["Standard"]).forEach(o => {
+            let opt = document.createElement('option'); opt.text = o; fin.add(opt);
+        });
+    }
+
+    // PLAN INTERACTIF
+    const canvas = document.getElementById('canvas-area');
+    let zIdx = 100;
+
+    function addMapObj(cls, txt, pos = null) {
+        const el = document.createElement('div');
+        el.className = `map-obj ${cls}`;
+        el.contentEditable = "true";
+        el.innerText = txt;
+        el.style.top = pos ? pos.t : "50px";
+        el.style.left = pos ? pos.l : "50px";
+        el.style.zIndex = cls.includes('text') ? 1000 : zIdx++;
+        
+        const bringFront = () => { el.style.zIndex = cls.includes('text') ? 2000 : zIdx++; };
+        el.onmousedown = el.ontouchstart = bringFront;
+        makeDraggable(el);
+        canvas.appendChild(el);
+    }
+
+    function makeDraggable(el) {
+        let isDown = false, offset = [0,0];
+        const move = (e) => {
+            if(!isDown) return;
+            const ev = e.touches ? e.touches[0] : e;
+            el.style.left = (ev.clientX + offset[0]) + 'px';
+            el.style.top = (ev.clientY + offset[1]) + 'px';
+        };
+        el.addEventListener('mousedown', (e) => { isDown = true; offset = [el.offsetLeft - e.clientX, el.offsetTop - e.clientY]; });
+        el.addEventListener('touchstart', (e) => { isDown = true; offset = [el.offsetLeft - e.touches[0].clientX, el.offsetTop - e.touches[0].clientY]; }, {passive:false});
+        document.addEventListener('mouseup', () => isDown = false);
+        document.addEventListener('touchend', () => isDown = false);
+        document.addEventListener('mousemove', move);
+        document.addEventListener('touchmove', move, {passive:false});
+    }
+
+    function clearMap() { if(confirm("Vider le plan ?")) canvas.innerHTML = ''; }
+
+    // SAUVEGARDE ET ARCHIVES
+    function saveData() {
+        const record = {
+            id: Date.now(),
+            nom: document.getElementById('c_nom').value || "Inconnu",
+            date: document.getElementById('c_date_v').value,
+            data: {
+                c_tel: document.getElementById('c_tel').value,
+                c_date_c: document.getElementById('c_date_c').value,
+                c_adr: document.getElementById('c_adr').value,
+                l_stat: document.getElementById('l_stat').value,
+                l_res: document.getElementById('l_res').value,
+                l_dech: document.getElementById('l_dech').value,
+                l_pass: document.getElementById('l_pass').value,
+                d_contrat: document.getElementById('d_contrat').value,
+                d_heures: document.getElementById('d_heures').value,
+                d_notes: document.getElementById('d_notes').value,
+                d_budget: document.getElementById('d_budget').value,
+                s_topo: document.getElementById('s_topo').value,
+                s_expo: document.getElementById('s_expo').value,
+                s_texture: document.getElementById('s_texture').value,
+                s_comp: document.getElementById('s_comp').value,
+                s_notes: document.getElementById('s_notes').value
+            },
+            tasks: Array.from(document.querySelectorAll('.work-item')).map(it => ({
+                type: it.querySelector('.t-type').value,
+                fin: it.querySelector('.t-fin').value,
+                qty: it.querySelector('.t-qty').value,
+                unit: it.querySelector('.t-unit').value
+            })),
+            plan: Array.from(document.querySelectorAll('.map-obj')).map(it => ({
+                cls: it.classList[1],
+                txt: it.innerText,
+                t: it.style.top,
+                l: it.style.left
+            }))
+        };
+        const db = JSON.parse(localStorage.getItem('paysage_db') || "[]");
+        db.push(record);
+        localStorage.setItem('paysage_db', JSON.stringify(db));
+        alert("Enregistré avec succès !");
+    }
+
+    function displayArchives() {
+        const list = document.getElementById('archive-list');
+        list.innerHTML = "";
+        const db = JSON.parse(localStorage.getItem('paysage_db') || "[]");
+        db.reverse().forEach(c => {
+            const div = document.createElement('div');
+            div.className = "archive-item";
+            div.innerHTML = `<span><strong>${c.nom}</strong> (${c.date})</span> 
+                             <button class="archive-btn" onclick="loadChantier(${c.id})">Charger</button>`;
+            list.appendChild(div);
+        });
+    }
+
+    function loadChantier(id) {
+        const db = JSON.parse(localStorage.getItem('paysage_db') || "[]");
+        const c = db.find(x => x.id === id);
+        if(!c) return;
+        
+        document.getElementById('c_nom').value = c.nom;
+        document.getElementById('c_date_v').value = c.date;
+        for (let key in c.data) { if(document.getElementById(key)) document.getElementById(key).value = c.data[key]; }
+        
+        document.getElementById('tasks-list').innerHTML = "";
+        c.tasks.forEach(t => addTask(t));
+        
+        clearMap();
+        c.plan.forEach(p => addMapObj(p.cls, p.txt, p));
+        
+        switchTab('tab-client', document.querySelector('.tab-btn'));
+    }
+
+    // Initialisation
+    document.getElementById('c_date_v').valueAsDate = new Date();
+    addTask();
+</script>
+</body>
+</html>
