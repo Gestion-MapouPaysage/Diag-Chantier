@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Expert Paysage - Diagnostic iPad</title>
+    <title>Expert Paysage Pro - iPad</title>
     <style>
         :root { --primary: #2e7d32; --secondary: #66bb6a; --bg-gray: #f5f5f5; --border: #ddd; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg-gray); padding-bottom: 80px; touch-action: manipulation; }
         header { background: var(--primary); color: white; padding: 10px; text-align: center; }
         
-        /* NAVIGATION */
         .tabs-nav { display: flex; background: white; overflow-x: auto; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 5000; }
         .tab-btn { flex: 1; min-width: 100px; padding: 15px 5px; border: none; background: white; cursor: pointer; font-weight: 600; color: #555; font-size: 0.85rem; }
         .tab-btn.active-tab { color: var(--primary); border-bottom: 3px solid var(--primary); background: #e8f5e9; }
@@ -26,33 +25,28 @@
         label { display: block; margin-bottom: 5px; font-size: 0.75rem; font-weight: bold; color: #333; text-transform: uppercase; }
         input, select, textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; font-size: 1rem; background: #fff; }
 
-        /* TRAVAUX */
         .work-item { border-left: 5px solid var(--secondary); background: #fafafa; margin-bottom: 10px; padding: 10px; border-radius: 4px; position: relative; }
         .btn-add { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .btn-del-task { background: #ff5252; color: white; border: none; padding: 8px; border-radius: 4px; margin-top: 10px; width: 100%; }
 
-        /* PLAN & TACTILE */
         #canvas-area { height: 65vh; background: white; background-image: radial-gradient(#ccc 1px, transparent 1px); background-size: 30px 30px; border: 2px solid #999; border-radius: 8px; position: relative; overflow: hidden; touch-action: none; }
         .toolbar { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; white-space: nowrap; -webkit-overflow-scrolling: touch; }
         .tool { min-width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border: 1px solid #ccc; border-radius: 8px; background: white; font-size: 22px; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         
         .map-obj { position: absolute; min-width: 50px; min-height: 50px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 10px; font-weight: bold; font-size: 0.8rem; z-index: 100; user-select: none; border: 1px solid transparent; }
-        
-        /* POIGNÉES TACTILES */
-        .resizer { width: 20px; height: 20px; background: #1976d2; border-radius: 50%; position: absolute; bottom: -10px; right: -10px; z-index: 1001; }
-        .obj-del { width: 20px; height: 20px; background: #d32f2f; color: white; border-radius: 50%; position: absolute; top: -10px; right: -10px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; z-index: 1001; }
+        .resizer { width: 24px; height: 24px; background: #1976d2; border-radius: 50%; position: absolute; bottom: -12px; right: -12px; z-index: 1001; border: 2px solid white; }
+        .obj-del { width: 24px; height: 24px; background: #d32f2f; color: white; border-radius: 50%; position: absolute; top: -12px; right: -12px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; z-index: 1001; border: 2px solid white; }
 
-        /* STYLES OBJETS */
-        .style-text { background: rgba(255,255,255,0.9); border: 1px solid #000; color: #000; z-index: 500; }
+        .style-text { background: rgba(255,255,255,0.9); border: 1px solid #000; z-index: 500; }
         .style-arbre { background: rgba(46, 125, 50, 0.7); border-radius: 50%; color: white; }
-        .style-piscine { background: rgba(3, 169, 244, 0.5); border: 2px solid #01579b; border-radius: 8px; }
-        .style-haie { background: repeating-linear-gradient(90deg, #1b5e20, #1b5e20 10px, #2e7d32 10px, #2e7d32 20px); border: 1px solid #000; }
-        .style-muret { background: #78909c; border: 2px solid #37474f; }
-        .style-gazon { background: #a5d6a7; border: 1px solid #2e7d32; }
-        .style-herbes { background: #dce775; border-bottom: 3px solid #827717; }
-        .style-dechets { background: #8d6e63; border-radius: 30% 70% 50% 50%; }
+        .style-piscine { background: rgba(3, 169, 244, 0.5); border: 2px solid #01579b; }
+        .style-maison { background: #cfd8dc; border: 2px solid #455a64; }
+        .style-massif { background: rgba(255, 182, 193, 0.6); border: 2px dotted #ff69b4; border-radius: 40%; }
+        .style-route { background: #9e9e9e; border: 2px solid #424242; }
+        .style-dalle { background: #e0e0e0; background-image: repeating-linear-gradient(0deg, transparent, transparent 19px, #bdbdbd 19px, #bdbdbd 20px), repeating-linear-gradient(90deg, transparent, transparent 19px, #bdbdbd 19px, #bdbdbd 20px); }
+        .style-danger { background: rgba(255, 235, 59, 0.5); border: 3px solid #f44336; color: #d32f2f; font-size: 1.5rem; }
+        .style-barriere { background: repeating-linear-gradient(45deg, #fb8c00, #fb8c00 5px, #000 5px, #000 10px); }
 
-        /* FLOATING ACTIONS */
         .actions-bar { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 15px; z-index: 6000; }
         .fab { width: 65px; height: 65px; border-radius: 50%; border: none; color: white; font-size: 28px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
         .btn-save { background: #1976d2; }
@@ -60,8 +54,8 @@
 
         @media print {
             .tabs-nav, .actions-bar, .toolbar, .btn-add, .btn-del-task, .resizer, .obj-del { display: none !important; }
-            .tab-content { display: block !important; page-break-inside: avoid; border-bottom: 1px solid #eee; margin-bottom: 20px; }
-            #canvas-area { height: 15cm; border: 2px solid #000; page-break-before: always; }
+            .tab-content { display: block !important; page-break-inside: avoid; margin-bottom: 20px; }
+            #canvas-area { height: 16cm; border: 2px solid #000; page-break-before: always; }
         }
     </style>
 </head>
@@ -101,11 +95,12 @@
                     </select>
                 </div>
                 <div class="col">
-                    <label>Passage libre / Largeur</label>
+                    <label>Passage / Largeur</label>
                     <select id="l_pass">
                         <option>Passage libre (Illimité)</option>
                         <option>Standard (> 1m)</option>
                         <option>Étroit (< 80cm)</option>
+                        <option>Passage Portail</option>
                         <option>Passage Garage / Porte</option>
                     </select>
                 </div>
@@ -139,52 +134,36 @@
                 <div class="col">
                     <label>Type de Contrat</label>
                     <select id="d_contrat">
-                        <option>Ponctuel</option>
-                        <option>Quinzomadaire</option>
-                        <option>Trihebdomadaire</option>
-                        <option>Mensuel</option>
-                        <option>Bimestriel</option>
-                        <option>Trimestriel</option>
-                        <option>Semestriel</option>
+                        <option>Ponctuel</option><option>Quinzomadaire</option><option>Trihebdomadaire</option>
+                        <option>Mensuel</option><option>Bimestriel</option><option>Trimestriel</option><option>Semestriel</option>
                     </select>
                 </div>
-                <div class="col">
-                    <label>Heures & Jours Passage</label>
-                    <input type="text" id="d_heures" placeholder="Ex: Lundi-Mardi">
-                </div>
+                <div class="col"><label>Heures & Jours</label><input type="text" id="d_heures"></div>
             </div>
-            <label>Doléances Client</label>
-            <textarea id="d_notes" rows="4"></textarea>
-            <label>Budget (€)</label>
-            <input type="number" id="d_budget">
+            <label>Doléances Client</label><textarea id="d_notes" rows="4"></textarea>
+            <label>Budget (€)</label><input type="number" id="d_budget">
         </div>
     </div>
 
     <div id="tab-station" class="tab-content">
         <div class="card">
-            <h2>Topographie & Environnement</h2>
+            <h2>Terrain & Sol</h2>
             <div class="row">
                 <div class="col">
                     <label>Topographie</label>
                     <select id="s_topo">
-                        <option>Plat (0%)</option>
-                        <option>Diversifié (Plat + Talus + Pentes)</option>
-                        <option>Pente douce</option>
-                        <option>Talus raide</option>
+                        <option>Plat (0%)</option><option>Diversifié (Plat + Talus + Pentes)</option>
+                        <option>Pente douce</option><option>Talus raide</option>
                     </select>
                 </div>
                 <div class="col">
                     <label>Texture Sol</label>
                     <select id="s_texture">
-                        <option>Argileux</option>
-                        <option>Sableux</option>
-                        <option>Limoneux</option>
-                        <option>Caillouteux</option>
+                        <option>Argileux</option><option>Sableux</option><option>Limoneux</option><option>Caillouteux</option>
                     </select>
                 </div>
             </div>
-            <label>Notes (Exposition, pH, humidité...)</label>
-            <textarea id="s_notes"></textarea>
+            <label>Notes Agronomiques</label><textarea id="s_notes"></textarea>
         </div>
     </div>
 
@@ -200,15 +179,14 @@
         <div class="card">
             <div class="toolbar">
                 <div class="tool" onclick="addMapObj('style-text', 'Note')">📝</div>
-                <div class="tool" onclick="addMapObj('style-arbre', '🌳 Arbre')">🌳</div>
-                <div class="tool" onclick="addMapObj('style-haie', 'Haie')">🌿</div>
-                <div class="tool" onclick="addMapObj('style-piscine', 'Bassin/Piscine')">💧</div>
-                <div class="tool" onclick="addMapObj('style-gazon', 'Pelouse')">🟩</div>
-                <div class="tool" onclick="addMapObj('style-herbes', 'Htes Herbes')">🌾</div>
-                <div class="tool" onclick="addMapObj('style-muret', 'Mur/Muret')">🧱</div>
-                <div class="tool" onclick="addMapObj('style-muret', 'Barrière')">🚧</div>
-                <div class="tool" onclick="addMapObj('style-piscine', 'Canal')">🌊</div>
-                <div class="tool" onclick="addMapObj('style-dechets', 'Déchets Verts')">💩</div>
+                <div class="tool" onclick="addMapObj('style-maison', 'MAISON')">🏠</div>
+                <div class="tool" onclick="addMapObj('style-arbre', 'ARBRE')">🌳</div>
+                <div class="tool" onclick="addMapObj('style-massif', 'MASSIF')">🌸</div>
+                <div class="tool" onclick="addMapObj('style-piscine', 'PISCINE')">💧</div>
+                <div class="tool" onclick="addMapObj('style-route', 'ACCÈS')">🛣️</div>
+                <div class="tool" onclick="addMapObj('style-dalle', 'DALLE')">🏁</div>
+                <div class="tool" onclick="addMapObj('style-barriere', 'CLÔTURE')">🚧</div>
+                <div class="tool" onclick="addMapObj('style-danger', '⚠️')">⚠️</div>
                 <div class="tool" onclick="clearMap()" style="color:red">🗑️</div>
             </div>
             <div id="canvas-area"></div>
@@ -217,7 +195,15 @@
 
     <div id="tab-archives" class="tab-content">
         <div class="card">
-            <h2>Chantiers Sauvegardés</h2>
+            <h2>Sauvegardes de secours</h2>
+            <div class="row">
+                <div class="col"><button class="btn-add" style="background:#1976d2" onclick="exportBackup()">📤 Exporter Backup (.json)</button></div>
+                <div class="col"><button class="btn-add" style="background:#546e7a" onclick="document.getElementById('importFile').click()">📥 Importer Backup</button></div>
+                <input type="file" id="importFile" style="display:none" onchange="importBackup(this)">
+            </div>
+        </div>
+        <div class="card">
+            <h2>Chantiers sur l'iPad</h2>
             <div id="archive-list"></div>
         </div>
     </div>
@@ -229,7 +215,6 @@
 </div>
 
 <script>
-    // --- NAVIGATION ---
     function switchTab(id, btn) {
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('show-content'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
@@ -238,7 +223,6 @@
         if(id === 'tab-archives') displayArchives();
     }
 
-    // --- TRAVAUX (Étoffé) ---
     function addTask(data = null) {
         const div = document.createElement('div');
         div.className = 'work-item';
@@ -249,33 +233,26 @@
                     <select class="t-type" onchange="updateFinitions(this)">
                         <option value="taille" ${data?.type=='taille'?'selected':''}>Taille (Hais, arbustes...)</option>
                         <option value="tonte" ${data?.type=='tonte'?'selected':''}>Tonte / Gazon</option>
+                        <option value="nettoyage" ${data?.type=='nettoyage'?'selected':''}>Nettoiement / Éclaircie</option>
                         <option value="elagage" ${data?.type=='elagage'?'selected':''}>Élagage / Abattage</option>
                         <option value="debrou" ${data?.type=='debrou'?'selected':''}>Débroussaillage</option>
                         <option value="creation" ${data?.type=='creation'?'selected':''}>Aménagement / Création</option>
-                        <option value="entretien" ${data?.type=='entretien'?'selected':''}>Entretien Massifs</option>
                     </select>
                 </div>
-                <div class="col">
-                    <label>Finition</label>
-                    <select class="t-fin"><option>${data?.fin || 'Standard'}</option></select>
-                </div>
+                <div class="col"><label>Finition</label><select class="t-fin"><option>${data?.fin || 'Standard'}</option></select></div>
             </div>
             <div class="row">
                 <div class="col"><input type="number" class="t-qty" value="${data?.qty||''}" placeholder="Qté"></div>
-                <div class="col">
-                    <label>Unité</label>
+                <div class="col"><label>Unité</label>
                     <select class="t-unit">
-                        <option ${data?.unit=='m²'?'selected':''}>m²</option>
-                        <option ${data?.unit=='ml'?'selected':''}>ml (linéaire)</option>
-                        <option ${data?.unit=='m³'?'selected':''}>m³ (volume)</option>
-                        <option ${data?.unit=='U'?'selected':''}>Unité (U)</option>
-                        <option ${data?.unit=='h'?'selected':''}>Heures</option>
-                        <option ${data?.unit=='diam'?'selected':''}>Diamètre</option>
-                        <option ${data?.unit=='haut'?'selected':''}>Hauteur</option>
+                        <option ${data?.unit=='m²'?'selected':''}>m²</option><option ${data?.unit=='ml'?'selected':''}>ml</option>
+                        <option ${data?.unit=='m³'?'selected':''}>m³</option><option ${data?.unit=='U'?'selected':''}>U</option>
+                        <option ${data?.unit=='h'?'selected':''}>h</option><option ${data?.unit=='diam'?'selected':''}>diam</option>
+                        <option ${data?.unit=='haut'?'selected':''}>haut</option>
                     </select>
                 </div>
             </div>
-            <button class="btn-del-task" onclick="this.parentElement.remove()">Retirer ce poste</button>
+            <button class="btn-del-task" onclick="this.parentElement.remove()">Supprimer</button>
         `;
         document.getElementById('tasks-list').appendChild(div);
         if(!data) updateFinitions(div.querySelector('.t-type'));
@@ -284,20 +261,17 @@
     function updateFinitions(sel) {
         const fin = sel.parentElement.nextElementSibling.querySelector('.t-fin');
         const opts = {
-            taille: ["Architecturée", "Douce / Sanitaire", "Rabattage", "Fruitière", "Haie bocagère"],
-            tonte: ["Ramassage", "Mulching", "Éjection latérale", "Gazon de prestige"],
-            elagage: ["Taille de formation", "Éclaircie", "Démontage avec rétention", "Rognage souche"],
-            debrou: ["Fauchage", "Broyage forestier", "Mise à blanc", "Passage rotofil"],
-            creation: ["Plantation", "Engazonnement", "Pose bordures", "Maçonnerie paysagère"],
-            entretien: ["Désherbage manuel", "Binage", "Apport amendement", "Paillage"]
+            taille: ["Architecturée", "Douce / Sanitaire", "Rabattage", "Fruitière"],
+            tonte: ["Ramassage", "Mulching", "Gazon prestige"],
+            nettoyage: ["Éclaircie", "Nettoiement grille", "Désherbage", "Défrichage"],
+            elagage: ["Taille formation", "Éclaircie", "Démontage", "Rognage"],
+            debrou: ["Fauchage", "Broyage forestier", "Mise à blanc"],
+            creation: ["Plantation", "Engazonnement", "Maçonnerie"]
         };
         fin.innerHTML = "";
-        (opts[sel.value] || ["Standard"]).forEach(o => {
-            let opt = document.createElement('option'); opt.text = o; fin.add(opt);
-        });
+        (opts[sel.value] || ["Standard"]).forEach(o => { let opt = document.createElement('option'); opt.text = o; fin.add(opt); });
     }
 
-    // --- PLAN (TACTILE IPAD) ---
     const canvas = document.getElementById('canvas-area');
     let zIdx = 100;
 
@@ -306,146 +280,22 @@
         el.className = `map-obj ${cls}`;
         el.contentEditable = "true";
         el.innerText = txt;
-        
-        // Taille et position
         el.style.width = savedData ? savedData.w : "100px";
         el.style.height = savedData ? savedData.h : "100px";
         el.style.top = savedData ? savedData.t : "100px";
         el.style.left = savedData ? savedData.l : "100px";
         el.style.zIndex = cls.includes('text') ? 1000 : zIdx++;
 
-        // Bouton suppression tactile
-        const del = document.createElement('div');
-        del.className = "obj-del";
-        del.innerHTML = "X";
-        del.onclick = () => el.remove();
-        el.appendChild(del);
+        const del = document.createElement('div'); del.className = "obj-del"; del.innerHTML = "X";
+        del.onclick = () => el.remove(); el.appendChild(del);
 
-        // Poignée redimensionnement tactile
-        const resizer = document.createElement('div');
-        resizer.className = "resizer";
-        el.appendChild(resizer);
+        const resizer = document.createElement('div'); resizer.className = "resizer"; el.appendChild(resizer);
 
         setupDraggable(el);
         setupResizer(el, resizer);
-        
         el.addEventListener('touchstart', () => { el.style.zIndex = zIdx++; });
         canvas.appendChild(el);
     }
 
     function setupDraggable(el) {
-        let isMoving = false, offsetX, offsetY;
-        el.addEventListener('touchstart', (e) => {
-            if(e.target.className === 'resizer' || e.target.className === 'obj-del') return;
-            isMoving = true;
-            const touch = e.touches[0];
-            offsetX = touch.clientX - el.offsetLeft;
-            offsetY = touch.clientY - el.offsetTop;
-        }, {passive: false});
-
-        document.addEventListener('touchmove', (e) => {
-            if(!isMoving) return;
-            const touch = e.touches[0];
-            el.style.left = (touch.clientX - offsetX) + 'px';
-            el.style.top = (touch.clientY - offsetY) + 'px';
-        }, {passive: false});
-
-        document.addEventListener('touchend', () => { isMoving = false; });
-    }
-
-    function setupResizer(el, resizer) {
-        let isResizing = false;
-        resizer.addEventListener('touchstart', (e) => {
-            isResizing = true;
-            e.preventDefault();
-            e.stopPropagation();
-        }, {passive: false});
-
-        document.addEventListener('touchmove', (e) => {
-            if(!isResizing) return;
-            const touch = e.touches[0];
-            const newW = touch.clientX - el.getBoundingClientRect().left;
-            const newH = touch.clientY - el.getBoundingClientRect().top;
-            if(newW > 30) el.style.width = newW + 'px';
-            if(newH > 30) el.style.height = newH + 'px';
-        }, {passive: false});
-
-        document.addEventListener('touchend', () => { isResizing = false; });
-    }
-
-    function clearMap() { if(confirm("Effacer le plan ?")) canvas.innerHTML = ''; }
-
-    // --- SAUVEGARDE LOCALE ---
-    function saveData() {
-        const record = {
-            id: Date.now(),
-            nom: document.getElementById('c_nom').value || "Sans-nom",
-            date: document.getElementById('c_date_v').value,
-            fields: {
-                c_tel: document.getElementById('c_tel').value,
-                c_adr: document.getElementById('c_adr').value,
-                c_date_c: document.getElementById('c_date_c').value,
-                l_stat: document.getElementById('l_stat').value,
-                l_pass: document.getElementById('l_pass').value,
-                l_res: document.getElementById('l_res').value,
-                l_dech: document.getElementById('l_dech').value,
-                d_contrat: document.getElementById('d_contrat').value,
-                d_heures: document.getElementById('d_heures').value,
-                d_notes: document.getElementById('d_notes').value,
-                d_budget: document.getElementById('d_budget').value,
-                s_topo: document.getElementById('s_topo').value,
-                s_texture: document.getElementById('s_texture').value,
-                s_notes: document.getElementById('s_notes').value
-            },
-            tasks: Array.from(document.querySelectorAll('.work-item')).map(it => ({
-                type: it.querySelector('.t-type').value,
-                fin: it.querySelector('.t-fin').value,
-                qty: it.querySelector('.t-qty').value,
-                unit: it.querySelector('.t-unit').value
-            })),
-            plan: Array.from(document.querySelectorAll('.map-obj')).map(it => ({
-                cls: it.classList[1],
-                txt: it.childNodes[0].textContent,
-                t: it.style.top, l: it.style.left, w: it.style.width, h: it.style.height
-            }))
-        };
-        const db = JSON.parse(localStorage.getItem('paysage_db') || "[]");
-        db.push(record);
-        localStorage.setItem('paysage_db', JSON.stringify(db));
-        alert("Chantier enregistré sur l'iPad !");
-    }
-
-    function displayArchives() {
-        const list = document.getElementById('archive-list');
-        list.innerHTML = "";
-        const db = JSON.parse(localStorage.getItem('paysage_db') || "[]");
-        db.reverse().forEach(c => {
-            const div = document.createElement('div');
-            div.className = "archive-item";
-            div.style = "display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;";
-            div.innerHTML = `<span><strong>${c.nom}</strong> (${c.date})</span> 
-                             <button onclick="loadChantier(${c.id})" style="background:var(--primary); color:white; border:none; padding:5px 10px; border-radius:4px;">Charger</button>`;
-            list.appendChild(div);
-        });
-    }
-
-    function loadChantier(id) {
-        const db = JSON.parse(localStorage.getItem('paysage_db') || "[]");
-        const c = db.find(x => x.id === id);
-        if(!c) return;
-        document.getElementById('c_nom').value = c.nom;
-        document.getElementById('c_date_v').value = c.date;
-        for(let k in c.fields) { if(document.getElementById(k)) document.getElementById(k).value = c.fields[k]; }
-        document.getElementById('tasks-list').innerHTML = "";
-        c.tasks.forEach(t => addTask(t));
-        canvas.innerHTML = '';
-        c.plan.forEach(p => addMapObj(p.cls, p.txt, p));
-        switchTab('tab-client', document.querySelector('.tab-btn'));
-    }
-
-    // Init
-    document.getElementById('c_date_v').valueAsDate = new Date();
-    addTask();
-</script>
-</body>
-</html>
+        let is
