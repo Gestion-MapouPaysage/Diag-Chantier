@@ -3,143 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mapoupaysage - Diagnostic Expert</title>
+    <title>Mapoupaysage - Diagnostic Expert v9</title>
     <style>
-        /* Thème inspiré par le logo Mapoupaysage */
         :root { 
-            --dark-green: #0a312d; /* Fond du logo */
-            --gold: #fbc02d;       /* Arbre du logo */
-            --light-green: #4caf50; /* Racines du logo */
-            --bg-gray: #f0f2f0;
-            --border: #ccc;
+            --dark-green: #0a312d; 
+            --gold: #fbc02d;       
+            --light-green: #4caf50; 
+            --bg-gray: #f5f5f5;
+            --border: #ddd;
         }
 
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg-gray); padding-bottom: 80px; touch-action: manipulation; }
         
-        /* HEADER AVEC LOGO */
         header { 
             background: var(--dark-green); 
             color: white; 
             padding: 15px; 
             text-align: center; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
             border-bottom: 4px solid var(--gold);
         }
-        .logo-placeholder {
-            width: 80px;
-            height: 80px;
-            background: #fff;
+        .logo-box {
+            width: 70px; height: 70px;
+            margin: 0 auto 10px;
+            background: white;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
             border: 2px solid var(--gold);
-            font-weight: bold;
-            font-size: 10px;
-            color: var(--dark-green);
-            text-align: center;
             overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
         }
-        .logo-placeholder img { width: 100%; height: 100%; object-fit: cover; }
-        header h1 { margin: 0; font-size: 1.4rem; letter-spacing: 1px; color: var(--gold); }
+        .logo-box img { width: 100%; height: 100%; object-fit: cover; }
+        header h1 { margin: 0; font-size: 1.3rem; color: var(--gold); letter-spacing: 1px; }
 
         .tabs-nav { display: flex; background: var(--dark-green); overflow-x: auto; border-bottom: 1px solid var(--gold); position: sticky; top: 0; z-index: 5000; }
-        .tab-btn { flex: 1; min-width: 90px; padding: 12px 5px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #fff; font-size: 0.8rem; opacity: 0.7; }
-        .tab-btn.active-tab { opacity: 1; color: var(--gold); border-bottom: 3px solid var(--gold); }
+        .tab-btn { flex: 1; min-width: 85px; padding: 12px 5px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #fff; font-size: 0.75rem; opacity: 0.7; }
+        .tab-btn.active-tab { opacity: 1; color: var(--gold); border-bottom: 3px solid var(--gold); background: rgba(255,255,255,0.05); }
 
         .container { max-width: 900px; margin: 15px auto; padding: 0 10px; }
         .tab-content { display: none; }
         .tab-content.show-content { display: block; }
 
-        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; border-top: 3px solid var(--light-green); }
-        h2 { color: var(--dark-green); font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 0; display: flex; align-items: center; gap: 8px; }
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; border-top: 3px solid var(--light-green); }
+        h2 { color: var(--dark-green); font-size: 1rem; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 0; text-transform: uppercase; }
         
         .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
-        .col { flex: 1; min-width: 180px; }
-        label { display: block; margin-bottom: 5px; font-size: 0.75rem; font-weight: bold; color: var(--dark-green); text-transform: uppercase; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; font-size: 1rem; background: #fff; }
+        .col { flex: 1; min-width: 170px; }
+        label { display: block; margin-bottom: 5px; font-size: 0.7rem; font-weight: bold; color: #555; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; font-size: 0.95rem; }
 
-        .work-item { border-left: 5px solid var(--gold); background: #fafafa; margin-bottom: 10px; padding: 10px; border-radius: 4px; position: relative; }
-        .btn-add { width: 100%; padding: 15px; background: var(--dark-green); color: var(--gold); border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1rem; }
-        .btn-del-task { background: #d32f2f; color: white; border: none; padding: 8px; border-radius: 4px; margin-top: 10px; width: 100%; }
+        .work-item { border-left: 5px solid var(--gold); background: #fafafa; margin-bottom: 10px; padding: 10px; border-radius: 4px; }
+        .btn-add { width: 100%; padding: 15px; background: var(--dark-green); color: var(--gold); border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-del-task { background: #ff5252; color: white; border: none; padding: 8px; border-radius: 4px; margin-top: 10px; width: 100%; }
 
-        /* PLAN GRAPHIQUE */
-        #canvas-area { height: 60vh; background: white; background-image: radial-gradient(#bbb 1px, transparent 1px); background-size: 25px 25px; border: 2px solid var(--dark-green); border-radius: 8px; position: relative; overflow: hidden; touch-action: none; }
-        .toolbar { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; white-space: nowrap; -webkit-overflow-scrolling: touch; }
-        .tool { min-width: 65px; height: 65px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 8px; background: white; font-size: 20px; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .tool span { font-size: 9px; margin-top: 2px; color: var(--dark-green); font-weight: bold; }
-        
-        /* Objets du plan */
-        .map-obj { position: absolute; min-width: 50px; min-height: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; user-select: none; box-sizing: border-box; overflow: hidden; }
-        .obj-emoji { flex: 1; display: flex; align-items: center; justify-content: center; line-height: 1; }
-        .obj-label { font-size: 10px; font-weight: bold; background: rgba(255,255,255,0.8); color: #000; padding: 1px 3px; border-radius: 3px; margin-bottom: 2px; text-align: center; width: 90%; overflow: hidden; pointer-events: none; }
+        /* PLAN */
+        #canvas-area { height: 60vh; background: white; background-image: radial-gradient(#ccc 1px, transparent 1px); background-size: 30px 30px; border: 2px solid var(--dark-green); border-radius: 8px; position: relative; overflow: hidden; touch-action: none; }
+        .toolbar { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; }
+        .tool { min-width: 60px; height: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #ccc; border-radius: 8px; background: white; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .tool span { font-size: 9px; font-weight: bold; color: var(--dark-green); }
 
-        .resizer { width: 25px; height: 25px; background: var(--gold); border-radius: 50%; position: absolute; bottom: -5px; right: -5px; z-index: 1001; border: 2px solid white; }
-        .obj-del { width: 22px; height: 22px; background: #d32f2f; color: white; border-radius: 50%; position: absolute; top: -5px; right: -5px; display: flex; align-items: center; justify-content: center; font-size: 12px; z-index: 1001; border: 2px solid white; }
+        .map-obj { position: absolute; min-width: 45px; min-height: 45px; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; box-sizing: border-box; }
+        .obj-emoji { flex: 1; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+        .obj-label { font-size: 10px; font-weight: bold; background: rgba(255,255,255,0.8); padding: 1px 3px; border-radius: 3px; pointer-events: none; }
+        .resizer { width: 25px; height: 25px; background: var(--gold); border-radius: 50%; position: absolute; bottom: -10px; right: -10px; z-index: 1001; border: 2px solid white; }
+        .obj-del { width: 22px; height: 22px; background: #ff5252; color: white; border-radius: 50%; position: absolute; top: -10px; right: -10px; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 1001; border: 2px solid white; }
 
-        /* Styles Spécifiques */
-        .style-maison { background: #cfd8dc; border: 2px solid var(--dark-green); }
-        .style-pelouse { background: #c8e6c9; border: 1px solid var(--light-green); }
+        /* Styles Plan */
+        .style-maison { background: #cfd8dc; border: 2px solid #546e7a; }
         .style-arbre { background: rgba(76, 175, 80, 0.3); border: 2px solid var(--dark-green); border-radius: 50%; }
-        .style-text { background: rgba(255,255,255,0.9); border: 1px solid var(--dark-green); font-size: 0.9rem !important; min-width: 80px; padding: 4px; }
+        .style-text { background: white; border: 1px solid black; min-width: 80px; padding: 5px; }
 
-        .actions-bar { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 15px; z-index: 6000; }
-        .fab { width: 60px; height: 60px; border-radius: 50%; border: none; color: white; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
-        .btn-save { background: var(--dark-green); color: var(--gold); }
-        .btn-print { background: #444; }
+        .actions-bar { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 12px; z-index: 6000; }
+        .fab { width: 60px; height: 60px; border-radius: 50%; border: none; color: white; box-shadow: 0 4px 8px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 24px; }
 
         @media print {
-            .tabs-nav, .actions-bar, .toolbar, .btn-add, .btn-del-task, .resizer, .obj-del, header { display: none !important; }
-            .tab-content { display: block !important; page-break-inside: avoid; margin-bottom: 20px; }
-            #canvas-area { height: 18cm; border: 1px solid #000; }
+            .tabs-nav, .actions-bar, .toolbar, .resizer, .obj-del, .btn-add { display: none !important; }
+            .tab-content { display: block !important; margin-bottom: 20px; }
+            #canvas-area { height: 15cm; border: 2px solid #000; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo-placeholder">
-        <img src="Color preview.jpg" alt="Mapoupaysage Logo">
+    <div class="logo-box">
+        <img src="Color preview.jpg" alt="Logo Mapoupaysage" onerror="this.style.display='none'">
     </div>
     <h1>MAPOUPAYSAGE</h1>
-    <div style="font-size: 0.7rem; color: var(--gold); margin-top: 5px;">S'ASSOCIER AVEC LE VIVANT</div>
+    <div style="font-size: 0.7rem; color: var(--gold);">S'ASSOCIER AVEC LE VIVANT</div>
 </header>
 
 <div class="tabs-nav">
     <button class="tab-btn active-tab" onclick="switchTab('tab-client', this)">Client</button>
+    <button class="tab-btn" onclick="switchTab('tab-doleances', this)">Doléances</button>
+    <button class="tab-btn" onclick="switchTab('tab-station', this)">Sol/Station</button>
     <button class="tab-btn" onclick="switchTab('tab-travaux', this)">Travaux</button>
-    <button class="tab-btn" onclick="switchTab('tab-plan', this)">Plan de Masse</button>
-    <button class="tab-btn" onclick="switchTab('tab-archives', this)">Archives</button>
+    <button class="tab-btn" onclick="switchTab('tab-plan', this)">Plan</button>
+    <button class="tab-btn" onclick="switchTab('tab-archives', this)">📁 Archives</button>
 </div>
 
 <div class="container">
     <div id="tab-client" class="tab-content show-content">
         <div class="card">
-            <h2>👤 Informations Client</h2>
+            <h2>Logistique & Contact</h2>
             <div class="row">
-                <div class="col"><label>Nom / Référence</label><input type="text" id="c_nom"></div>
-                <div class="col"><label>Téléphone</label><input type="tel" id="c_tel"></div>
+                <div class="col"><label>Nom Client</label><input type="text" id="c_nom"></div>
+                <div class="col"><label>Tél</label><input type="tel" id="c_tel"></div>
             </div>
-            <label>Adresse du chantier</label><input type="text" id="c_adr">
+            <label>Adresse</label><input type="text" id="c_adr">
             <div class="row" style="margin-top:10px;">
-                <div class="col"><label>Logistique Accès</label>
-                    <select id="l_pass"><option>Accès Facile</option><option>Étroit (>80cm)</option><option>Très étroit (<80cm)</option><option>Escaliers</option></select>
+                <div class="col"><label>Stationnement</label>
+                    <select id="l_stat"><option>Facile</option><option>Difficile</option><option>Éloigné</option></select>
                 </div>
-                <div class="col"><label>Déchets</label>
-                    <select id="l_dech"><option>Évacuation</option><option>Broyage sur place</option><option>Stockage client</option></select>
+                <div class="col"><label>Passage / Largeur</label>
+                    <select id="l_pass"><option>Libre</option><option>Standard (>1m)</option><option>Étroit (<80cm)</option></select>
                 </div>
             </div>
         </div>
     </div>
 
+    <div id="tab-doleances" class="tab-content">
+        <div class="card">
+            <h2>Contrat & Budget</h2>
+            <div class="row">
+                <div class="col"><label>Fréquence</label>
+                    <select id="d_contrat"><option>Ponctuel</option><option>Mensuel</option><option>Trimestriel</option></select>
+                </div>
+                <div class="col"><label>Budget Estimé (€)</label><input type="number" id="d_budget"></div>
+            </div>
+            <label>Notes / Souhaits client</label><textarea id="d_notes" rows="4"></textarea>
+        </div>
+    </div>
+
+    <div id="tab-station" class="tab-content">
+        <div class="card">
+            <h2>Terrain & Environnement</h2>
+            <div class="row">
+                <div class="col"><label>Topographie</label>
+                    <select id="s_topo"><option>Plat</option><option>Pente</option><option>Talus</option></select>
+                </div>
+                <div class="col"><label>Texture du Sol</label>
+                    <select id="s_texture"><option>Argileux</option><option>Sableux</option><option>Limoneux</option></select>
+                </div>
+            </div>
+            <label>Observations Agronomiques</label><textarea id="s_notes" rows="3"></textarea>
+        </div>
+    </div>
+
     <div id="tab-travaux" class="tab-content">
         <div class="card">
-            <h2>🌿 Liste des Travaux</h2>
+            <h2>Prestations à chiffrer</h2>
             <div id="tasks-list"></div>
-            <button class="btn-add" onclick="addTask()">+ AJOUTER UNE PRESTATION</button>
+            <button class="btn-add" onclick="addTask()">+ Ajouter un poste</button>
         </div>
     </div>
 
@@ -149,13 +162,11 @@
                 <div class="tool" onclick="addMapObj('style-text', 'Note', 'Note')">📝<span>Note</span></div>
                 <div class="tool" onclick="addMapObj('style-maison', '🏠', 'Maison')">🏠<span>Maison</span></div>
                 <div class="tool" onclick="addMapObj('style-arbre', '🌳', 'Arbre')">🌳<span>Arbre</span></div>
-                <div class="tool" onclick="addMapObj('style-pelouse', '🟩', 'Gazon')">🟩<span>Gazon</span></div>
+                <div class="tool" onclick="addMapObj('style-pelouse', '🟩', 'Pelouse')">🟩<span>Pelouse</span></div>
                 <div class="tool" onclick="addMapObj('style-haie', '🌿', 'Haie')">🌿<span>Haie</span></div>
                 <div class="tool" onclick="addMapObj('style-massif', '🌸', 'Massif')">🌸<span>Massif</span></div>
-                <div class="tool" onclick="addMapObj('style-eau', '💧', 'Eau')">💧<span>Point Eau</span></div>
-                <div class="tool" onclick="addMapObj('style-acces', '🛣️', 'Accès')">🛣️<span>Entrée</span></div>
-                <div class="tool" onclick="addMapObj('style-danger', '⚠️', 'Danger')">⚠️<span>Danger</span></div>
-                <div class="tool" onclick="clearMap()" style="color:red">🗑️<span>Effacer</span></div>
+                <div class="tool" onclick="addMapObj('style-eau', '💧', 'Eau')">💧<span>Eau</span></div>
+                <div class="tool" onclick="clearMap()" style="color:red">🗑️<span>RAZ</span></div>
             </div>
             <div id="canvas-area"></div>
         </div>
@@ -163,15 +174,15 @@
 
     <div id="tab-archives" class="tab-content">
         <div class="card">
-            <h2>📁 Dossiers Enregistrés</h2>
+            <h2>Archives Mapoupaysage</h2>
             <div id="archive-list"></div>
         </div>
     </div>
 </div>
 
 <div class="actions-bar">
-    <button class="fab btn-save" onclick="saveData()">💾</button>
-    <button class="fab btn-print" onclick="window.print()">🖨️</button>
+    <button class="fab" style="background:var(--dark-green); color:var(--gold);" onclick="saveData()">💾</button>
+    <button class="fab" style="background:#444; color:white;" onclick="window.print()">🖨️</button>
 </div>
 
 <script>
@@ -188,13 +199,12 @@
         div.className = 'work-item';
         div.innerHTML = `
             <div class="row">
-                <div class="col"><select class="t-type">
+                <div class="col"><label>Type</label><select class="t-type">
                     <option value="taille" ${data?.type=='taille'?'selected':''}>Taille</option>
                     <option value="tonte" ${data?.type=='tonte'?'selected':''}>Tonte</option>
-                    <option value="elagage" ${data?.type=='elagage'?'selected':''}>Élagage</option>
                     <option value="creation" ${data?.type=='creation'?'selected':''}>Création</option>
                 </select></div>
-                <div class="col"><input type="number" class="t-qty" value="${data?.qty||''}" placeholder="Qté"></div>
+                <div class="col"><label>Qté</label><input type="number" class="t-qty" value="${data?.qty||''}"></div>
             </div>
             <button class="btn-del-task" onclick="this.parentElement.remove()">Supprimer</button>
         `;
@@ -217,53 +227,52 @@
             emojiSpan.className = 'obj-emoji';
             emojiSpan.innerHTML = content;
             el.appendChild(emojiSpan);
-
-            const labelDiv = document.createElement('div');
-            labelDiv.className = 'obj-label';
-            labelDiv.innerText = labelText;
-            el.appendChild(labelDiv);
+            const lDiv = document.createElement('div');
+            lDiv.className = 'obj-label';
+            lDiv.innerText = labelText;
+            el.appendChild(lDiv);
         }
 
-        el.style.width = savedData ? savedData.w : (isText ? "100px" : "70px");
-        el.style.height = savedData ? savedData.h : (isText ? "50px" : "70px");
-        el.style.top = savedData ? savedData.t : "50px";
-        el.style.left = savedData ? savedData.l : "50px";
+        el.style.width = savedData?.w || (isText ? "100px" : "70px");
+        el.style.height = savedData?.h || (isText ? "50px" : "70px");
+        el.style.top = savedData?.t || "50px";
+        el.style.left = savedData?.l || "50px";
         
         if(!isText) {
-            const emojiEl = el.querySelector('.obj-emoji');
-            emojiEl.style.fontSize = (savedData && savedData.fs) ? savedData.fs : "40px";
+            const emoji = el.querySelector('.obj-emoji');
+            emoji.style.fontSize = savedData?.fs || "40px";
         }
 
         const del = document.createElement('div'); del.className = "obj-del"; del.innerHTML = "X";
         del.onclick = (e) => { e.stopPropagation(); el.remove(); }; el.appendChild(del);
 
-        const resizer = document.createElement('div'); resizer.className = "resizer"; el.appendChild(resizer);
+        const res = document.createElement('div'); res.className = "resizer"; el.appendChild(res);
 
         setupDraggable(el);
-        setupResizer(el, resizer, isText);
+        setupResizer(el, res, isText);
         canvas.appendChild(el);
     }
 
     function setupDraggable(el) {
-        let isMoving = false, offsetX, offsetY;
+        let isM = false, ox, oy;
         el.addEventListener('touchstart', (e) => {
             if(e.target.className.includes('resizer') || e.target.className.includes('obj-del')) return;
-            isMoving = true; const t = e.touches[0];
-            offsetX = t.clientX - el.offsetLeft; offsetY = t.clientY - el.offsetTop;
+            isM = true; const t = e.touches[0];
+            ox = t.clientX - el.offsetLeft; oy = t.clientY - el.offsetTop;
             el.style.zIndex = zIdx++;
-        }, {passive: false});
+        });
         document.addEventListener('touchmove', (e) => {
-            if(!isMoving) return; const t = e.touches[0];
-            el.style.left = (t.clientX - offsetX) + 'px'; el.style.top = (t.clientY - offsetY) + 'px';
-        }, {passive: false});
-        document.addEventListener('touchend', () => { isMoving = false; });
+            if(!isM) return; const t = e.touches[0];
+            el.style.left = (t.clientX - ox) + 'px'; el.style.top = (t.clientY - oy) + 'px';
+        });
+        document.addEventListener('touchend', () => isM = false);
     }
 
-    function setupResizer(el, resizer, isText) {
-        let isResizing = false;
-        resizer.addEventListener('touchstart', (e) => { isResizing = true; e.preventDefault(); }, {passive: false});
+    function setupResizer(el, res, isText) {
+        let isR = false;
+        res.addEventListener('touchstart', (e) => { isR = true; e.preventDefault(); e.stopPropagation(); });
         document.addEventListener('touchmove', (e) => {
-            if(!isResizing) return;
+            if(!isR) return;
             const t = e.touches[0];
             const rect = canvas.getBoundingClientRect();
             const nw = t.clientX - rect.left - parseFloat(el.style.left);
@@ -271,55 +280,55 @@
             if(nw > 40) el.style.width = nw + 'px';
             if(nh > 40) el.style.height = nh + 'px';
             if(!isText) {
-                const emoji = el.querySelector('.obj-emoji');
-                emoji.style.fontSize = (Math.min(nw, nh) * 0.6) + 'px';
+                el.querySelector('.obj-emoji').style.fontSize = (Math.min(nw, nh) * 0.6) + 'px';
             }
-        }, {passive: false});
-        document.addEventListener('touchend', () => isResizing = false);
+        });
+        document.addEventListener('touchend', () => isR = false);
     }
 
-    function clearMap() { if(confirm("Effacer le plan ?")) canvas.innerHTML = ''; }
+    function clearMap() { if(confirm("Effacer ?")) canvas.innerHTML = ''; }
 
     function saveData() {
         const record = {
             id: Date.now(),
-            nom: document.getElementById('c_nom').value || "Inconnu",
-            date: new Date().toLocaleDateString(),
-            fields: { c_tel: document.getElementById('c_tel').value, c_adr: document.getElementById('c_adr').value },
-            plan: Array.from(document.querySelectorAll('.map-obj')).map(it => {
-                const isT = it.classList.contains('style-text');
-                return {
-                    cls: it.classList[1],
-                    content: isT ? it.innerText.replace('X','') : it.querySelector('.obj-emoji').innerHTML,
-                    label: isT ? "" : it.querySelector('.obj-label').innerText,
-                    w: it.style.width, h: it.style.height, t: it.style.top, l: it.style.left,
-                    fs: isT ? "" : it.querySelector('.obj-emoji').style.fontSize,
-                    isText: isT
-                }
-            })
+            nom: document.getElementById('c_nom').value || "Sans-nom",
+            fields: {
+                c_tel: document.getElementById('c_tel').value,
+                c_adr: document.getElementById('c_adr').value,
+                d_budget: document.getElementById('d_budget').value,
+                d_notes: document.getElementById('d_notes').value,
+                s_notes: document.getElementById('s_notes').value
+            },
+            plan: Array.from(document.querySelectorAll('.map-obj')).map(it => ({
+                cls: it.classList[1],
+                content: it.classList.contains('style-text') ? it.innerText.replace('X','') : it.querySelector('.obj-emoji').innerHTML,
+                label: it.querySelector('.obj-label')?.innerText || "",
+                w: it.style.width, h: it.style.height, t: it.style.top, l: it.style.left,
+                fs: it.querySelector('.obj-emoji')?.style.fontSize || ""
+            }))
         };
-        const db = JSON.parse(localStorage.getItem('mapou_db') || "[]");
+        const db = JSON.parse(localStorage.getItem('mapou_v9') || "[]");
         db.push(record);
-        localStorage.setItem('mapou_db', JSON.stringify(db));
-        alert("Dossier Mapoupaysage enregistré.");
+        localStorage.setItem('mapou_v9', JSON.stringify(db));
+        alert("Enregistré !");
     }
 
     function displayArchives() {
         const list = document.getElementById('archive-list'); list.innerHTML = "";
-        const db = JSON.parse(localStorage.getItem('mapou_db') || "[]");
+        const db = JSON.parse(localStorage.getItem('mapou_v9') || "[]");
         db.reverse().forEach(c => {
             const d = document.createElement('div');
-            d.style = "padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;";
-            d.innerHTML = `<span><strong>${c.nom}</strong> - ${c.date}</span> <button onclick="loadChantier(${c.id})" style="background:var(--gold); border:none; padding:5px 10px; border-radius:4px;">Ouvrir</button>`;
+            d.style = "padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between;";
+            d.innerHTML = `<span>${c.nom}</span> <button onclick="loadChantier(${c.id})">Ouvrir</button>`;
             list.appendChild(d);
         });
     }
 
     function loadChantier(id) {
-        const db = JSON.parse(localStorage.getItem('mapou_db') || "[]");
+        const db = JSON.parse(localStorage.getItem('mapou_v9') || "[]");
         const c = db.find(x => x.id === id); if(!c) return;
         document.getElementById('c_nom').value = c.nom;
-        document.getElementById('c_adr').value = c.fields.c_adr;
+        for(let k in c.fields) if(document.getElementById(k)) document.getElementById(k).value = c.fields[k];
         canvas.innerHTML = '';
         c.plan.forEach(p => addMapObj(p.cls, p.content, p.label, p));
         switchTab('tab-client', document.querySelector('.tab-btn'));
