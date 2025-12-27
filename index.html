@@ -298,4 +298,111 @@
     }
 
     function setupDraggable(el) {
-        let is
+        let isMoving = false, offsetX, offsetY;
+        el.addEventListener('touchstart', (e) => {
+            if(e.target.className === 'resizer' || e.target.className === 'obj-del') return;
+            isMoving = true; const touch = e.touches[0];
+            offsetX = touch.clientX - el.offsetLeft; offsetY = touch.clientY - el.offsetTop;
+        }, {passive: false});
+        document.addEventListener('touchmove', (e) => {
+            if(!isMoving) return; const touch = e.touches[0];
+            el.style.left = (touch.clientX - offsetX) + 'px'; el.style.top = (touch.clientY - offsetY) + 'px';
+        }, {passive: false});
+        document.addEventListener('touchend', () => { isMoving = false; });
+    }
+
+    function setupResizer(el, resizer) {
+        let isResizing = false;
+        resizer.addEventListener('touchstart', (e) => { isResizing = true; e.preventDefault(); e.stopPropagation(); }, {passive: false});
+        document.addEventListener('touchmove', (e) => {
+            if(!isResizing) return; const touch = e.touches[0];
+            const newW = touch.clientX - el.getBoundingClientRect().left;
+            const newH = touch.clientY - el.getBoundingClientRect().top;
+            if(newW > 40) el.style.width = newW + 'px';
+            if(newH > 40) el.style.height = newH + 'px';
+        }, {passive: false});
+        document.addEventListener('touchend', () => { isResizing = false; });
+    }
+
+    function clearMap() { if(confirm("Effacer ?")) canvas.innerHTML = ''; }
+
+    function saveData() {
+        const record = {
+            id: Date.now(),
+            nom: document.getElementById('c_nom').value || "Sans-nom",
+            date: document.getElementById('c_date_v').value,
+            fields: {
+                c_tel: document.getElementById('c_tel').value, c_adr: document.getElementById('c_adr').value,
+                c_date_c: document.getElementById('c_date_c').value, l_stat: document.getElementById('l_stat').value,
+                l_pass: document.getElementById('l_pass').value, l_res: document.getElementById('l_res').value,
+                l_dech: document.getElementById('l_dech').value, d_contrat: document.getElementById('d_contrat').value,
+                d_heures: document.getElementById('d_heures').value, d_notes: document.getElementById('d_notes').value,
+                d_budget: document.getElementById('d_budget').value, s_topo: document.getElementById('s_topo').value,
+                s_texture: document.getElementById('s_texture').value, s_notes: document.getElementById('s_notes').value
+            },
+            tasks: Array.from(document.querySelectorAll('.work-item')).map(it => ({
+                type: it.querySelector('.t-type').value, fin: it.querySelector('.t-fin').value,
+                qty: it.querySelector('.t-qty').value, unit: it.querySelector('.t-unit').value
+            })),
+            plan: Array.from(document.querySelectorAll('.map-obj')).map(it => ({
+                cls: it.classList[1], txt: it.childNodes[0].textContent,
+                t: it.style.top, l: it.style.left, w: it.style.width, h: it.style.height
+            }))
+        };
+        const db = JSON.parse(localStorage.getItem('paysage_db') || "[]");
+        db.push(record);
+        localStorage.setItem('paysage_db', JSON.stringify(db));
+        alert("Enregistré !");
+    }
+
+    function displayArchives() {
+        const list = document.getElementById('archive-list'); list.innerHTML = "";
+        const db = JSON.parse(localStorage.getItem('paysage_db') || "[]");
+        db.reverse().forEach(c => {
+            const div = document.createElement('div');
+            div.style = "display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee; background:white;";
+            div.innerHTML = `<span><strong>${c.nom}</strong> (${c.date})</span> 
+                             <button onclick="loadChantier(${c.id})" style="background:var(--primary); color:white; border:none; padding:8px 15px; border-radius:4px;">Charger</button>`;
+            list.appendChild(div);
+        });
+    }
+
+    function loadChantier(id) {
+        const db = JSON.parse(localStorage.getItem('paysage_db') || "[]");
+        const c = db.find(x => x.id === id); if(!c) return;
+        document.getElementById('c_nom').value = c.nom;
+        document.getElementById('c_date_v').value = c.date;
+        for(let k in c.fields) { if(document.getElementById(k)) document.getElementById(k).value = c.fields[k]; }
+        document.getElementById('tasks-list').innerHTML = "";
+        c.tasks.forEach(t => addTask(t));
+        canvas.innerHTML = '';
+        c.plan.forEach(p => addMapObj(p.cls, p.txt, p));
+        switchTab('tab-client', document.querySelector('.tab-btn'));
+    }
+
+    function exportBackup() {
+        const data = localStorage.getItem('paysage_db') || "[]";
+        const blob = new Blob([data], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `backup_paysage_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+    }
+
+    function importBackup(input) {
+        const file = input.files[0]; if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            if(confirm("Écraser les données actuelles avec ce backup ?")) {
+                localStorage.setItem('paysage_db', e.target.result);
+                displayArchives(); alert("Backup restauré !");
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    document.getElementById('c_date_v').valueAsDate = new Date();
+    addTask();
+</script>
+</body>
+</html>
