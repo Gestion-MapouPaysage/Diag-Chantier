@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mapoupaysage - Expert v10</title>
+    <title>Mapoupaysage - Diagnostic Expert v11</title>
     <style>
         :root { 
             --dark-green: #0a312d; 
@@ -20,69 +20,80 @@
             color: white; padding: 15px; text-align: center; 
             border-bottom: 4px solid var(--gold);
         }
-        .logo-container {
-            width: 80px; height: 80px; margin: 0 auto 10px;
+        .logo-box {
+            width: 85px; height: 85px; margin: 0 auto 10px;
             background: white; border-radius: 50%; border: 2px solid var(--gold);
             overflow: hidden; display: flex; align-items: center; justify-content: center;
         }
-        .logo-container img { width: 100%; height: 100%; object-fit: cover; }
-        header h1 { margin: 0; font-size: 1.3rem; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
+        .logo-box img { width: 100%; height: 100%; object-fit: cover; }
+        header h1 { margin: 0; font-size: 1.4rem; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
+        .slogan { font-size: 0.75rem; color: var(--gold); font-weight: bold; margin-top: 5px; opacity: 0.9; }
 
         .tabs-nav { display: flex; background: var(--dark-green); overflow-x: auto; border-bottom: 1px solid var(--gold); position: sticky; top: 0; z-index: 5000; }
-        .tab-btn { flex: 1; min-width: 100px; padding: 15px 5px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #fff; font-size: 0.8rem; opacity: 0.6; }
+        .tab-btn { flex: 1; min-width: 100px; padding: 15px 5px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #fff; font-size: 0.85rem; opacity: 0.6; }
         .tab-btn.active-tab { opacity: 1; color: var(--gold); border-bottom: 3px solid var(--gold); background: rgba(255,255,255,0.05); }
 
         .container { max-width: 900px; margin: 15px auto; padding: 0 10px; }
         .tab-content { display: none; }
         .tab-content.show-content { display: block; }
 
-        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; border-top: 3px solid var(--light-green); }
-        h2 { color: var(--dark-green); font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 0; }
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; border-top: 4px solid var(--light-green); }
+        h2 { color: var(--dark-green); font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-top: 0; display: flex; align-items: center; gap: 10px; }
         
         .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
         .col { flex: 1; min-width: 180px; }
         label { display: block; margin-bottom: 5px; font-size: 0.75rem; font-weight: bold; color: #333; text-transform: uppercase; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; font-size: 1rem; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; font-size: 1rem; background: #fff; }
 
-        .work-item { border-left: 5px solid var(--gold); background: #fafafa; margin-bottom: 10px; padding: 10px; border-radius: 4px; position: relative; }
-        .btn-add { width: 100%; padding: 15px; background: var(--dark-green); color: var(--gold); border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-del-task { background: #ff5252; color: white; border: none; padding: 8px; border-radius: 4px; margin-top: 10px; width: 100%; }
+        .work-item { border-left: 5px solid var(--gold); background: #fafafa; margin-bottom: 12px; padding: 15px; border-radius: 4px; position: relative; box-shadow: inset 0 0 5px rgba(0,0,0,0.05); }
+        .btn-add { width: 100%; padding: 15px; background: var(--dark-green); color: var(--gold); border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1rem; }
+        .btn-del-task { background: #ff5252; color: white; border: none; padding: 8px; border-radius: 4px; margin-top: 10px; width: 100%; font-weight: bold; }
 
-        /* PLAN GRAPHIQUE V10 */
+        /* PLAN GRAPHIQUE AMÉLIORÉ */
         #canvas-area { height: 65vh; background: white; background-image: radial-gradient(#ccc 1px, transparent 1px); background-size: 30px 30px; border: 2px solid var(--dark-green); border-radius: 8px; position: relative; overflow: hidden; touch-action: none; }
         .toolbar { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; white-space: nowrap; -webkit-overflow-scrolling: touch; }
-        .tool { min-width: 60px; height: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #ccc; border-radius: 8px; background: white; font-size: 20px; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .tool { min-width: 65px; height: 65px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #ccc; border-radius: 8px; background: white; font-size: 22px; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .tool span { font-size: 10px; margin-top: 2px; color: var(--dark-green); font-weight: bold; }
         
+        /* Objets du plan avec texte descriptif */
         .map-obj { position: absolute; min-width: 50px; min-height: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; user-select: none; box-sizing: border-box; overflow: hidden; }
-        .obj-emoji { flex: 1; display: flex; align-items: center; justify-content: center; line-height: 1; }
-        .obj-label { font-size: 11px; font-weight: bold; background: rgba(255,255,255,0.7); color: #000; padding: 1px 4px; border-radius: 4px; margin-bottom: 2px; text-align: center; width: 90%; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+        .obj-emoji { flex: 1; display: flex; align-items: center; justify-content: center; line-height: 1; pointer-events: none; }
+        .obj-label { font-size: 11px; font-weight: bold; background: rgba(255,255,255,0.8); color: #000; padding: 2px 5px; border-radius: 4px; margin-bottom: 3px; text-align: center; width: 85%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; pointer-events: none; border: 1px solid rgba(0,0,0,0.1); }
 
-        .resizer { width: 30px; height: 30px; background: var(--gold); border-radius: 50%; position: absolute; bottom: -10px; right: -10px; z-index: 1001; border: 3px solid white; }
-        .obj-del { width: 24px; height: 24px; background: #ff5252; color: white; border-radius: 50%; position: absolute; top: -10px; right: -10px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; z-index: 1001; border: 2px solid white; }
+        .resizer { width: 30px; height: 30px; background: var(--gold); border-radius: 50%; position: absolute; bottom: -8px; right: -8px; z-index: 1001; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .obj-del { width: 26px; height: 26px; background: #ff5252; color: white; border-radius: 50%; position: absolute; top: -8px; right: -8px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; z-index: 1001; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
+        /* Styles de zones */
         .style-maison { background: #b0bec5; border: 3px solid #546e7a; border-radius: 4px; }
+        .style-cloture { background: transparent; border: 2px dashed #795548; }
+        .style-dalle { background: #e0e0e0; border: 1px solid #9e9e9e; }
+        .style-pelouse { background: #a5d6a7; border: 1px solid #4caf50; opacity: 0.8; }
         .style-arbre { background: rgba(76, 175, 80, 0.4); border: 2px solid var(--dark-green); border-radius: 50%; }
-        .style-text { background: rgba(255,255,255,0.9); border: 1px solid #000; font-size: 1rem !important; min-width: 80px; z-index: 500; display:block; padding: 5px; }
+        .style-eau { background: #81d4fa; border: 1px solid #0288d1; border-radius: 50%; }
+        .style-text { background: rgba(255,255,255,0.95); border: 1px solid var(--dark-green); font-size: 1rem !important; min-width: 100px; z-index: 500; padding: 8px; border-radius: 4px; }
 
         .actions-bar { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 15px; z-index: 6000; }
-        .fab { width: 65px; height: 65px; border-radius: 50%; border: none; color: white; font-size: 28px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
+        .fab { width: 65px; height: 65px; border-radius: 50%; border: none; color: white; font-size: 28px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .btn-save { background: var(--dark-green); color: var(--gold); }
+        .btn-print { background: #333; }
 
         @media print {
-            .tabs-nav, .actions-bar, .toolbar, .btn-add, .btn-del-task, .resizer, .obj-del { display: none !important; }
-            .tab-content { display: block !important; page-break-inside: avoid; margin-bottom: 20px; }
-            #canvas-area { height: 16cm; border: 2px solid #000; page-break-before: always; }
+            .tabs-nav, .actions-bar, .toolbar, .btn-add, .btn-del-task, .resizer, .obj-del, .logo-box { display: none !important; }
+            .tab-content { display: block !important; page-break-inside: avoid; margin-bottom: 25px; }
+            #canvas-area { height: 17cm; border: 2px solid #000; page-break-before: always; }
+            header { background: white; color: black; border-bottom: 2px solid black; }
+            header h1 { color: black; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo-container">
-        <img src="Color preview.jpg" alt="Logo Mapoupaysage" onerror="this.parentNode.innerHTML='🌳'">
+    <div class="logo-box">
+        <img src="Color preview.jpg" alt="Logo Mapoupaysage" onerror="this.style.display='none'">
     </div>
     <h1>Mapoupaysage</h1>
-    <div style="font-size: 0.75rem; color: var(--gold); font-weight: bold; margin-top: 5px;">S'ASSOCIER AVEC LE VIVANT</div>
+    <div class="slogan">S'ASSOCIER AVEC LE VIVANT</div>
 </header>
 
 <div class="tabs-nav">
@@ -91,13 +102,13 @@
     <button class="tab-btn" onclick="switchTab('tab-station', this)">3. Sol/Station</button>
     <button class="tab-btn" onclick="switchTab('tab-travaux', this)">4. Travaux</button>
     <button class="tab-btn" onclick="switchTab('tab-plan', this)">5. Plan</button>
-    <button class="tab-btn" onclick="switchTab('tab-archives', this)" style="background: rgba(251,192,45,0.2);">📁 Archives</button>
+    <button class="tab-btn" onclick="switchTab('tab-archives', this)" style="background: rgba(251,192,45,0.15);">📁 Archives</button>
 </div>
 
 <div class="container">
     <div id="tab-client" class="tab-content show-content">
         <div class="card">
-            <h2>Information & Logistique</h2>
+            <h2>👤 Information & Logistique</h2>
             <div class="row">
                 <div class="col"><label>Nom Client</label><input type="text" id="c_nom"></div>
                 <div class="col"><label>Tél</label><input type="tel" id="c_tel"></div>
@@ -110,21 +121,40 @@
             <div class="row" style="margin-top:10px;">
                 <div class="col">
                     <label>Stationnement</label>
-                    <select id="l_stat"><option>Facile / Devant</option><option>Difficile / Rue étroite</option><option>Éloigné (> 20 mètres)</option></select>
+                    <select id="l_stat">
+                        <option>Facile / Devant</option>
+                        <option>Difficile / Rue étroite</option>
+                        <option>Éloigné (> 20 mètres)</option>
+                    </select>
                 </div>
                 <div class="col">
                     <label>Passage / Largeur</label>
-                    <select id="l_pass"><option>Passage libre (Illimité)</option><option>Standard (> 1m)</option><option>Étroit (< 80cm)</option><option>Passage Portail</option><option>Passage Garage / Porte</option></select>
+                    <select id="l_pass">
+                        <option>Passage libre (Illimité)</option>
+                        <option>Standard (> 1m)</option>
+                        <option>Étroit (< 80cm)</option>
+                        <option>Passage Portail</option>
+                        <option>Passage Garage / Porte</option>
+                    </select>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
                     <label>Réseaux Apparents</label>
-                    <select id="l_res"><option>Aucun</option><option>Câbles, tuyau, bornes ouvertes</option><option>Arrosage aérien</option></select>
+                    <select id="l_res">
+                        <option>Aucun</option>
+                        <option>Câbles, tuyau, bornes ouvertes</option>
+                        <option>Arrosage aérien</option>
+                    </select>
                 </div>
                 <div class="col">
                     <label>Gestion Déchets</label>
-                    <select id="l_dech"><option>Évacuation déchetterie</option><option>Bord de route</option><option>Broyage / Mulching</option><option>Stockage sur place</option></select>
+                    <select id="l_dech">
+                        <option>Évacuation déchetterie</option>
+                        <option>Bord de route</option>
+                        <option>Broyage / Mulching</option>
+                        <option>Stockage sur place</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -132,39 +162,57 @@
 
     <div id="tab-doleances" class="tab-content">
         <div class="card">
-            <h2>Contrat & Fréquence</h2>
+            <h2>📜 Contrat & Fréquence</h2>
             <div class="row">
                 <div class="col">
                     <label>Type de Contrat</label>
-                    <select id="d_contrat"><option>Ponctuel</option><option>Quinzomadaire</option><option>Trihebdomadaire</option><option>Mensuel</option><option>Bimestriel</option><option>Trimestriel</option><option>Semestriel</option></select>
+                    <select id="d_contrat">
+                        <option>Ponctuel</option>
+                        <option>Quinzomadaire</option>
+                        <option>Trihebdomadaire</option>
+                        <option>Mensuel</option>
+                        <option>Bimestriel</option>
+                        <option>Trimestriel</option>
+                        <option>Semestriel</option>
+                    </select>
                 </div>
-                <div class="col"><label>Heures & Jours</label><input type="text" id="d_heures"></div>
+                <div class="col"><label>Heures & Jours estimés</label><input type="text" id="d_heures"></div>
             </div>
-            <label>Doléances Client</label><textarea id="d_notes" rows="4"></textarea>
-            <label>Budget (€)</label><input type="number" id="d_budget">
+            <label>Doléances / Besoins Client</label><textarea id="d_notes" rows="4"></textarea>
+            <label>Budget prévisionnel (€)</label><input type="number" id="d_budget">
         </div>
     </div>
 
     <div id="tab-station" class="tab-content">
         <div class="card">
-            <h2>Terrain & Sol</h2>
+            <h2>🌍 Terrain & Sol</h2>
             <div class="row">
                 <div class="col">
                     <label>Topographie</label>
-                    <select id="s_topo"><option>Plat (0%)</option><option>Diversifié (Plat + Talus + Pentes)</option><option>Pente douce</option><option>Talus raide</option></select>
+                    <select id="s_topo">
+                        <option>Plat (0%)</option>
+                        <option>Diversifié (Plat + Talus + Pentes)</option>
+                        <option>Pente douce</option>
+                        <option>Talus raide</option>
+                    </select>
                 </div>
                 <div class="col">
                     <label>Texture Sol</label>
-                    <select id="s_texture"><option>Argileux</option><option>Sableux</option><option>Limoneux</option><option>Caillouteux</option></select>
+                    <select id="s_texture">
+                        <option>Argileux</option>
+                        <option>Sableux</option>
+                        <option>Limoneux</option>
+                        <option>Caillouteux</option>
+                    </select>
                 </div>
             </div>
-            <label>Notes Agronomiques</label><textarea id="s_notes" rows="3"></textarea>
+            <label>Notes Agronomiques (Ph, humidité...)</label><textarea id="s_notes" rows="3"></textarea>
         </div>
     </div>
 
     <div id="tab-travaux" class="tab-content">
         <div class="card">
-            <h2>Liste des Prestations</h2>
+            <h2>🛠️ Liste des Prestations</h2>
             <div id="tasks-list"></div>
             <button class="btn-add" onclick="addTask()">+ Ajouter un travail</button>
         </div>
@@ -175,12 +223,14 @@
             <div class="toolbar">
                 <div class="tool" onclick="addMapObj('style-text', 'Note', 'Note')">📝<span>Note</span></div>
                 <div class="tool" onclick="addMapObj('style-maison', '🏠', 'Maison')">🏠<span>Maison</span></div>
-                <div class="tool" onclick="addMapObj('style-arbre', '🌳', 'Arbre')">🌳<span>Arbre</span></div>
+                <div class="tool" onclick="addMapObj('style-cloture', '⛓️', 'Clôture')">⛓️<span>Clôture</span></div>
+                <div class="tool" onclick="addMapObj('style-dalle', '⬜', 'Dalle/Terrasse')">⬜<span>Dalle</span></div>
                 <div class="tool" onclick="addMapObj('style-pelouse', '🟩', 'Pelouse')">🟩<span>Pelouse</span></div>
+                <div class="tool" onclick="addMapObj('style-arbre', '🌳', 'Arbre')">🌳<span>Arbre</span></div>
                 <div class="tool" onclick="addMapObj('style-massif', '🌸', 'Massif')">🌸<span>Massif</span></div>
                 <div class="tool" onclick="addMapObj('style-eau', '💧', 'Eau')">💧<span>Eau</span></div>
                 <div class="tool" onclick="addMapObj('style-danger', '⚠️', 'Danger')">⚠️<span>Danger</span></div>
-                <div class="tool" onclick="clearMap()" style="color:red">🗑️<span>Tout</span></div>
+                <div class="tool" onclick="clearMap()" style="color:red">🗑️<span>RAZ</span></div>
             </div>
             <div id="canvas-area"></div>
         </div>
@@ -188,15 +238,15 @@
 
     <div id="tab-archives" class="tab-content">
         <div class="card">
-            <h2>Chantiers Mapoupaysage</h2>
+            <h2>📁 Archives Mapoupaysage</h2>
             <div id="archive-list"></div>
         </div>
     </div>
 </div>
 
 <div class="actions-bar">
-    <button class="fab" style="background:var(--dark-green); color:var(--gold);" onclick="saveData()">💾</button>
-    <button class="fab" style="background:#333; color:white;" onclick="window.print()">🖨️</button>
+    <button class="fab btn-save" onclick="saveData()">💾</button>
+    <button class="fab btn-print" onclick="window.print()">🖨️</button>
 </div>
 
 <script>
@@ -208,18 +258,21 @@
         if(id === 'tab-archives') displayArchives();
     }
 
+    // GESTION DES TRAVAUX (Logique v6 conservée)
     function addTask(data = null) {
         const div = document.createElement('div');
         div.className = 'work-item';
         div.innerHTML = `
             <div class="row">
                 <div class="col">
-                    <label>Type</label>
+                    <label>Type de Travail</label>
                     <select class="t-type" onchange="updateFinitions(this)">
                         <option value="taille" ${data?.type=='taille'?'selected':''}>Taille</option>
                         <option value="tonte" ${data?.type=='tonte'?'selected':''}>Tonte / Gazon</option>
-                        <option value="nettoyage" ${data?.type=='nettoyage'?'selected':''}>Nettoiement</option>
+                        <option value="nettoyage" ${data?.type=='nettoyage'?'selected':''}>Nettoiement / Éclaircie</option>
                         <option value="elagage" ${data?.type=='elagage'?'selected':''}>Élagage / Abattage</option>
+                        <option value="debrou" ${data?.type=='debrou'?'selected':''}>Débroussaillage</option>
+                        <option value="creation" ${data?.type=='creation'?'selected':''}>Aménagement / Création</option>
                     </select>
                 </div>
                 <div class="col"><label>Finition</label><select class="t-fin"><option>${data?.fin || 'Standard'}</option></select></div>
@@ -228,7 +281,9 @@
                 <div class="col"><input type="number" class="t-qty" value="${data?.qty||''}" placeholder="Qté"></div>
                 <div class="col"><label>Unité</label>
                     <select class="t-unit">
-                        <option ${data?.unit=='m²'?'selected':''}>m²</option><option ${data?.unit=='ml'?'selected':''}>ml</option><option ${data?.unit=='U'?'selected':''}>U</option>
+                        <option ${data?.unit=='m²'?'selected':''}>m²</option><option ${data?.unit=='ml'?'selected':''}>ml</option>
+                        <option ${data?.unit=='m³'?'selected':''}>m³</option><option ${data?.unit=='U'?'selected':''}>U</option>
+                        <option ${data?.unit=='h'?'selected':''}>h</option>
                     </select>
                 </div>
             </div>
@@ -243,13 +298,16 @@
         const opts = {
             taille: ["Architecturée", "Douce / Sanitaire", "Rabattage", "Fruitière"],
             tonte: ["Ramassage", "Mulching", "Gazon prestige"],
-            nettoyage: ["Éclaircie", "Désherbage", "Défrichage"],
-            elagage: ["Taille formation", "Éclaircie", "Démontage"]
+            nettoyage: ["Éclaircie", "Nettoiement grille", "Désherbage", "Défrichage"],
+            elagage: ["Taille formation", "Éclaircie", "Démontage", "Rognage"],
+            debrou: ["Fauchage", "Broyage forestier", "Mise à blanc"],
+            creation: ["Plantation", "Engazonnement", "Maçonnerie"]
         };
         fin.innerHTML = "";
         (opts[sel.value] || ["Standard"]).forEach(o => { let opt = document.createElement('option'); opt.text = o; fin.add(opt); });
     }
 
+    // LOGIQUE PLAN (v11 avec Texte Descriptif et Resizing proportionnel)
     const canvas = document.getElementById('canvas-area');
     let zIdx = 100;
 
@@ -266,24 +324,25 @@
             emojiSpan.className = 'obj-emoji';
             emojiSpan.innerHTML = content;
             el.appendChild(emojiSpan);
+
             const labelDiv = document.createElement('div');
             labelDiv.className = 'obj-label';
             labelDiv.innerText = labelText;
             el.appendChild(labelDiv);
         }
 
-        el.style.width = savedData?.w || (isText ? "100px" : "70px");
-        el.style.height = savedData?.h || (isText ? "50px" : "70px");
+        el.style.width = savedData?.w || (isText ? "120px" : "80px");
+        el.style.height = savedData?.h || (isText ? "60px" : "80px");
         el.style.top = savedData?.t || "100px";
         el.style.left = savedData?.l || "100px";
         
         if(!isText) {
             const emoji = el.querySelector('.obj-emoji');
-            emoji.style.fontSize = savedData?.fs || "40px";
+            emoji.style.fontSize = savedData?.fs || "45px";
         }
 
         const del = document.createElement('div'); del.className = "obj-del"; del.innerHTML = "X";
-        del.onclick = () => el.remove(); el.appendChild(del);
+        del.onclick = (e) => { e.stopPropagation(); el.remove(); }; el.appendChild(del);
 
         const resizer = document.createElement('div'); resizer.className = "resizer"; el.appendChild(resizer);
 
@@ -299,17 +358,17 @@
             isM = true; const t = e.touches[0];
             ox = t.clientX - el.offsetLeft; oy = t.clientY - el.offsetTop;
             el.style.zIndex = zIdx++;
-        });
+        }, {passive: false});
         document.addEventListener('touchmove', (e) => {
             if(!isM) return; const t = e.touches[0];
             el.style.left = (t.clientX - ox) + 'px'; el.style.top = (t.clientY - oy) + 'px';
-        });
+        }, {passive: false});
         document.addEventListener('touchend', () => isM = false);
     }
 
     function setupResizer(el, res, isText) {
         let isR = false;
-        res.addEventListener('touchstart', (e) => { isR = true; e.preventDefault(); e.stopPropagation(); });
+        res.addEventListener('touchstart', (e) => { isR = true; e.preventDefault(); e.stopPropagation(); }, {passive: false});
         document.addEventListener('touchmove', (e) => {
             if(!isR) return;
             const t = e.touches[0];
@@ -318,17 +377,22 @@
             const nh = t.clientY - rect.top - parseFloat(el.style.top);
             if(nw > 40) el.style.width = nw + 'px';
             if(nh > 40) el.style.height = nh + 'px';
-            if(!isText) el.querySelector('.obj-emoji').style.fontSize = (Math.min(nw, nh) * 0.6) + 'px';
-        });
+            if(!isText) {
+                const emoji = el.querySelector('.obj-emoji');
+                emoji.style.fontSize = (Math.min(nw, nh) * 0.6) + 'px';
+            }
+        }, {passive: false});
         document.addEventListener('touchend', () => isR = false);
     }
 
-    function clearMap() { if(confirm("Effacer tout ?")) canvas.innerHTML = ''; }
+    function clearMap() { if(confirm("Effacer tout le plan ?")) canvas.innerHTML = ''; }
 
+    // SAUVEGARDE & ARCHIVES (Logique v6 avec tous les champs)
     function saveData() {
         const record = {
             id: Date.now(),
-            nom: document.getElementById('c_nom').value || "Sans-nom",
+            nom: document.getElementById('c_nom').value || "Inconnu",
+            date: document.getElementById('c_date_v').value || new Date().toLocaleDateString(),
             fields: {},
             tasks: Array.from(document.querySelectorAll('.work-item')).map(it => ({
                 type: it.querySelector('.t-type').value, fin: it.querySelector('.t-fin').value,
@@ -342,27 +406,29 @@
                 fs: it.querySelector('.obj-emoji')?.style.fontSize || ""
             }))
         };
+        // Capture tous les champs de saisie
         document.querySelectorAll('input, select, textarea').forEach(i => { if(i.id) record.fields[i.id] = i.value; });
-        const db = JSON.parse(localStorage.getItem('mapou_v10') || "[]");
+        
+        const db = JSON.parse(localStorage.getItem('mapou_v11') || "[]");
         db.push(record);
-        localStorage.setItem('mapou_v10', JSON.stringify(db));
-        alert("Chantier Mapoupaysage enregistré !");
+        localStorage.setItem('mapou_v11', JSON.stringify(db));
+        alert("Dossier Mapoupaysage enregistré !");
     }
 
     function displayArchives() {
         const list = document.getElementById('archive-list'); list.innerHTML = "";
-        const db = JSON.parse(localStorage.getItem('mapou_v10') || "[]");
+        const db = JSON.parse(localStorage.getItem('mapou_v11') || "[]");
         db.reverse().forEach(c => {
             const div = document.createElement('div');
-            div.style = "display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee; background:white;";
-            div.innerHTML = `<span><strong>${c.nom}</strong></span> 
-                             <button onclick="loadChantier(${c.id})" style="background:var(--gold); border:none; padding:8px; border-radius:4px;">Charger</button>`;
+            div.style = "display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid #eee; background:white; margin-bottom:5px; border-radius:4px;";
+            div.innerHTML = `<span><strong>${c.nom}</strong> (${c.date})</span> 
+                             <button onclick="loadChantier(${c.id})" style="background:var(--gold); border:none; padding:8px 15px; border-radius:4px; font-weight:bold; cursor:pointer;">Ouvrir</button>`;
             list.appendChild(div);
         });
     }
 
     function loadChantier(id) {
-        const db = JSON.parse(localStorage.getItem('mapou_v10') || "[]");
+        const db = JSON.parse(localStorage.getItem('mapou_v11') || "[]");
         const c = db.find(x => x.id === id); if(!c) return;
         for(let k in c.fields) if(document.getElementById(k)) document.getElementById(k).value = c.fields[k];
         document.getElementById('tasks-list').innerHTML = "";
