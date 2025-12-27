@@ -135,4 +135,197 @@
         </div>
     </div>
 
-    <div id="tab-travaux" class="tab
+    <div id="tab-travaux" class="tab-content">
+        <div class="card">
+            <h2>🌿 Liste des Travaux</h2>
+            <div id="tasks-list"></div>
+            <button class="btn-add" onclick="addTask()">+ AJOUTER UNE PRESTATION</button>
+        </div>
+    </div>
+
+    <div id="tab-plan" class="tab-content">
+        <div class="card">
+            <div class="toolbar">
+                <div class="tool" onclick="addMapObj('style-text', 'Note', 'Note')">📝<span>Note</span></div>
+                <div class="tool" onclick="addMapObj('style-maison', '🏠', 'Maison')">🏠<span>Maison</span></div>
+                <div class="tool" onclick="addMapObj('style-arbre', '🌳', 'Arbre')">🌳<span>Arbre</span></div>
+                <div class="tool" onclick="addMapObj('style-pelouse', '🟩', 'Gazon')">🟩<span>Gazon</span></div>
+                <div class="tool" onclick="addMapObj('style-haie', '🌿', 'Haie')">🌿<span>Haie</span></div>
+                <div class="tool" onclick="addMapObj('style-massif', '🌸', 'Massif')">🌸<span>Massif</span></div>
+                <div class="tool" onclick="addMapObj('style-eau', '💧', 'Eau')">💧<span>Point Eau</span></div>
+                <div class="tool" onclick="addMapObj('style-acces', '🛣️', 'Accès')">🛣️<span>Entrée</span></div>
+                <div class="tool" onclick="addMapObj('style-danger', '⚠️', 'Danger')">⚠️<span>Danger</span></div>
+                <div class="tool" onclick="clearMap()" style="color:red">🗑️<span>Effacer</span></div>
+            </div>
+            <div id="canvas-area"></div>
+        </div>
+    </div>
+
+    <div id="tab-archives" class="tab-content">
+        <div class="card">
+            <h2>📁 Dossiers Enregistrés</h2>
+            <div id="archive-list"></div>
+        </div>
+    </div>
+</div>
+
+<div class="actions-bar">
+    <button class="fab btn-save" onclick="saveData()">💾</button>
+    <button class="fab btn-print" onclick="window.print()">🖨️</button>
+</div>
+
+<script>
+    function switchTab(id, btn) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('show-content'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
+        document.getElementById(id).classList.add('show-content');
+        btn.classList.add('active-tab');
+        if(id === 'tab-archives') displayArchives();
+    }
+
+    function addTask(data = null) {
+        const div = document.createElement('div');
+        div.className = 'work-item';
+        div.innerHTML = `
+            <div class="row">
+                <div class="col"><select class="t-type">
+                    <option value="taille" ${data?.type=='taille'?'selected':''}>Taille</option>
+                    <option value="tonte" ${data?.type=='tonte'?'selected':''}>Tonte</option>
+                    <option value="elagage" ${data?.type=='elagage'?'selected':''}>Élagage</option>
+                    <option value="creation" ${data?.type=='creation'?'selected':''}>Création</option>
+                </select></div>
+                <div class="col"><input type="number" class="t-qty" value="${data?.qty||''}" placeholder="Qté"></div>
+            </div>
+            <button class="btn-del-task" onclick="this.parentElement.remove()">Supprimer</button>
+        `;
+        document.getElementById('tasks-list').appendChild(div);
+    }
+
+    const canvas = document.getElementById('canvas-area');
+    let zIdx = 100;
+
+    function addMapObj(cls, content, labelText, savedData = null) {
+        const el = document.createElement('div');
+        el.className = `map-obj ${cls}`;
+        const isText = (cls === 'style-text');
+        
+        if(isText) {
+            el.contentEditable = "true";
+            el.innerText = content;
+        } else {
+            const emojiSpan = document.createElement('span');
+            emojiSpan.className = 'obj-emoji';
+            emojiSpan.innerHTML = content;
+            el.appendChild(emojiSpan);
+
+            const labelDiv = document.createElement('div');
+            labelDiv.className = 'obj-label';
+            labelDiv.innerText = labelText;
+            el.appendChild(labelDiv);
+        }
+
+        el.style.width = savedData ? savedData.w : (isText ? "100px" : "70px");
+        el.style.height = savedData ? savedData.h : (isText ? "50px" : "70px");
+        el.style.top = savedData ? savedData.t : "50px";
+        el.style.left = savedData ? savedData.l : "50px";
+        
+        if(!isText) {
+            const emojiEl = el.querySelector('.obj-emoji');
+            emojiEl.style.fontSize = (savedData && savedData.fs) ? savedData.fs : "40px";
+        }
+
+        const del = document.createElement('div'); del.className = "obj-del"; del.innerHTML = "X";
+        del.onclick = (e) => { e.stopPropagation(); el.remove(); }; el.appendChild(del);
+
+        const resizer = document.createElement('div'); resizer.className = "resizer"; el.appendChild(resizer);
+
+        setupDraggable(el);
+        setupResizer(el, resizer, isText);
+        canvas.appendChild(el);
+    }
+
+    function setupDraggable(el) {
+        let isMoving = false, offsetX, offsetY;
+        el.addEventListener('touchstart', (e) => {
+            if(e.target.className.includes('resizer') || e.target.className.includes('obj-del')) return;
+            isMoving = true; const t = e.touches[0];
+            offsetX = t.clientX - el.offsetLeft; offsetY = t.clientY - el.offsetTop;
+            el.style.zIndex = zIdx++;
+        }, {passive: false});
+        document.addEventListener('touchmove', (e) => {
+            if(!isMoving) return; const t = e.touches[0];
+            el.style.left = (t.clientX - offsetX) + 'px'; el.style.top = (t.clientY - offsetY) + 'px';
+        }, {passive: false});
+        document.addEventListener('touchend', () => { isMoving = false; });
+    }
+
+    function setupResizer(el, resizer, isText) {
+        let isResizing = false;
+        resizer.addEventListener('touchstart', (e) => { isResizing = true; e.preventDefault(); }, {passive: false});
+        document.addEventListener('touchmove', (e) => {
+            if(!isResizing) return;
+            const t = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const nw = t.clientX - rect.left - parseFloat(el.style.left);
+            const nh = t.clientY - rect.top - parseFloat(el.style.top);
+            if(nw > 40) el.style.width = nw + 'px';
+            if(nh > 40) el.style.height = nh + 'px';
+            if(!isText) {
+                const emoji = el.querySelector('.obj-emoji');
+                emoji.style.fontSize = (Math.min(nw, nh) * 0.6) + 'px';
+            }
+        }, {passive: false});
+        document.addEventListener('touchend', () => isResizing = false);
+    }
+
+    function clearMap() { if(confirm("Effacer le plan ?")) canvas.innerHTML = ''; }
+
+    function saveData() {
+        const record = {
+            id: Date.now(),
+            nom: document.getElementById('c_nom').value || "Inconnu",
+            date: new Date().toLocaleDateString(),
+            fields: { c_tel: document.getElementById('c_tel').value, c_adr: document.getElementById('c_adr').value },
+            plan: Array.from(document.querySelectorAll('.map-obj')).map(it => {
+                const isT = it.classList.contains('style-text');
+                return {
+                    cls: it.classList[1],
+                    content: isT ? it.innerText.replace('X','') : it.querySelector('.obj-emoji').innerHTML,
+                    label: isT ? "" : it.querySelector('.obj-label').innerText,
+                    w: it.style.width, h: it.style.height, t: it.style.top, l: it.style.left,
+                    fs: isT ? "" : it.querySelector('.obj-emoji').style.fontSize,
+                    isText: isT
+                }
+            })
+        };
+        const db = JSON.parse(localStorage.getItem('mapou_db') || "[]");
+        db.push(record);
+        localStorage.setItem('mapou_db', JSON.stringify(db));
+        alert("Dossier Mapoupaysage enregistré.");
+    }
+
+    function displayArchives() {
+        const list = document.getElementById('archive-list'); list.innerHTML = "";
+        const db = JSON.parse(localStorage.getItem('mapou_db') || "[]");
+        db.reverse().forEach(c => {
+            const d = document.createElement('div');
+            d.style = "padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;";
+            d.innerHTML = `<span><strong>${c.nom}</strong> - ${c.date}</span> <button onclick="loadChantier(${c.id})" style="background:var(--gold); border:none; padding:5px 10px; border-radius:4px;">Ouvrir</button>`;
+            list.appendChild(d);
+        });
+    }
+
+    function loadChantier(id) {
+        const db = JSON.parse(localStorage.getItem('mapou_db') || "[]");
+        const c = db.find(x => x.id === id); if(!c) return;
+        document.getElementById('c_nom').value = c.nom;
+        document.getElementById('c_adr').value = c.fields.c_adr;
+        canvas.innerHTML = '';
+        c.plan.forEach(p => addMapObj(p.cls, p.content, p.label, p));
+        switchTab('tab-client', document.querySelector('.tab-btn'));
+    }
+
+    addTask();
+</script>
+</body>
+</html>
