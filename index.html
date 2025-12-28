@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mapoupaysage - Diagnostic Expert v11</title>
+    <title>Mapoupaysage - App Interne v12</title>
     <style>
         :root { 
             --dark-green: #0a312d; 
@@ -29,14 +29,16 @@
         header h1 { margin: 0; font-size: 1.4rem; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
         .slogan { font-size: 0.75rem; color: var(--gold); font-weight: bold; margin-top: 5px; opacity: 0.9; }
 
+        /* NAVIGATION */
         .tabs-nav { display: flex; background: var(--dark-green); overflow-x: auto; border-bottom: 1px solid var(--gold); position: sticky; top: 0; z-index: 5000; }
-        .tab-btn { flex: 1; min-width: 100px; padding: 15px 5px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #fff; font-size: 0.85rem; opacity: 0.6; }
+        .tab-btn { flex: 1; min-width: 90px; padding: 15px 5px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #fff; font-size: 0.85rem; opacity: 0.6; transition: 0.3s; }
         .tab-btn.active-tab { opacity: 1; color: var(--gold); border-bottom: 3px solid var(--gold); background: rgba(255,255,255,0.05); }
 
         .container { max-width: 900px; margin: 15px auto; padding: 0 10px; }
         .tab-content { display: none; }
         .tab-content.show-content { display: block; }
 
+        /* CARTES ET FORMULAIRES */
         .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; border-top: 4px solid var(--light-green); }
         h2 { color: var(--dark-green); font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-top: 0; display: flex; align-items: center; gap: 10px; }
         
@@ -44,18 +46,20 @@
         .col { flex: 1; min-width: 180px; }
         label { display: block; margin-bottom: 5px; font-size: 0.75rem; font-weight: bold; color: #333; text-transform: uppercase; }
         input, select, textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; font-size: 1rem; background: #fff; }
+        textarea { resize: vertical; }
 
+        /* TRAVAUX */
         .work-item { border-left: 5px solid var(--gold); background: #fafafa; margin-bottom: 12px; padding: 15px; border-radius: 4px; position: relative; box-shadow: inset 0 0 5px rgba(0,0,0,0.05); }
         .btn-add { width: 100%; padding: 15px; background: var(--dark-green); color: var(--gold); border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1rem; }
         .btn-del-task { background: #ff5252; color: white; border: none; padding: 8px; border-radius: 4px; margin-top: 10px; width: 100%; font-weight: bold; }
 
-        /* PLAN GRAPHIQUE AMÉLIORÉ */
+        /* PLAN GRAPHIQUE */
         #canvas-area { height: 65vh; background: white; background-image: radial-gradient(#ccc 1px, transparent 1px); background-size: 30px 30px; border: 2px solid var(--dark-green); border-radius: 8px; position: relative; overflow: hidden; touch-action: none; }
         .toolbar { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; white-space: nowrap; -webkit-overflow-scrolling: touch; }
         .tool { min-width: 65px; height: 65px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #ccc; border-radius: 8px; background: white; font-size: 22px; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .tool span { font-size: 10px; margin-top: 2px; color: var(--dark-green); font-weight: bold; }
         
-        /* Objets du plan avec texte descriptif */
+        /* Objets du plan */
         .map-obj { position: absolute; min-width: 50px; min-height: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; user-select: none; box-sizing: border-box; overflow: hidden; }
         .obj-emoji { flex: 1; display: flex; align-items: center; justify-content: center; line-height: 1; pointer-events: none; }
         .obj-label { font-size: 11px; font-weight: bold; background: rgba(255,255,255,0.8); color: #000; padding: 2px 5px; border-radius: 4px; margin-bottom: 3px; text-align: center; width: 85%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; pointer-events: none; border: 1px solid rgba(0,0,0,0.1); }
@@ -70,13 +74,15 @@
         .style-pelouse { background: #a5d6a7; border: 1px solid #4caf50; opacity: 0.8; }
         .style-arbre { background: rgba(76, 175, 80, 0.4); border: 2px solid var(--dark-green); border-radius: 50%; }
         .style-eau { background: #81d4fa; border: 1px solid #0288d1; border-radius: 50%; }
-        .style-text { background: rgba(255,255,255,0.95); border: 1px solid var(--dark-green); font-size: 1rem !important; min-width: 100px; z-index: 500; padding: 8px; border-radius: 4px; }
+        .style-text { background: rgba(255,255,255,0.95); border: 1px solid var(--dark-green); font-size: 1rem !important; min-width: 100px; z-index: 1050; padding: 8px; border-radius: 4px; }
 
+        /* BOUTONS FLOTTANTS */
         .actions-bar { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 15px; z-index: 6000; }
         .fab { width: 65px; height: 65px; border-radius: 50%; border: none; color: white; font-size: 28px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .btn-save { background: var(--dark-green); color: var(--gold); }
         .btn-print { background: #333; }
 
+        /* IMPRESSION */
         @media print {
             .tabs-nav, .actions-bar, .toolbar, .btn-add, .btn-del-task, .resizer, .obj-del, .logo-box { display: none !important; }
             .tab-content { display: block !important; page-break-inside: avoid; margin-bottom: 25px; }
@@ -90,7 +96,7 @@
 
 <header>
     <div class="logo-box">
-        <img src="Color preview.jpg" alt="Logo Mapoupaysage" onerror="this.style.display='none'">
+        <img src="Color preview.jpg" alt="Logo" onerror="this.style.display='none'; this.parentNode.innerText='MAPOU'">
     </div>
     <h1>Mapoupaysage</h1>
     <div class="slogan">S'ASSOCIER AVEC LE VIVANT</div>
@@ -157,6 +163,10 @@
                     </select>
                 </div>
             </div>
+        </div>
+        <div class="card">
+            <h2>✍️ Validation</h2>
+            <div style="height:50px; border:1px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#999;">Espace Signature (Sur papier après impression)</div>
         </div>
     </div>
 
@@ -238,15 +248,24 @@
 
     <div id="tab-archives" class="tab-content">
         <div class="card">
-            <h2>📁 Archives Mapoupaysage</h2>
+            <h2>Coffre-fort de Données</h2>
+            <div class="row">
+                <div class="col"><button class="btn-add" style="background:#1976d2" onclick="exportBackup()">📤 Sauvegarder tout (Backup)</button></div>
+                <div class="col"><button class="btn-add" style="background:#546e7a" onclick="document.getElementById('importFile').click()">📥 Restaurer Backup</button></div>
+                <input type="file" id="importFile" style="display:none" onchange="importBackup(this)">
+            </div>
+            <p style="font-size:0.8rem; color:#666;">Utilisez le backup régulièrement pour sécuriser vos données hors de l'iPad.</p>
+        </div>
+        <div class="card">
+            <h2>Dossiers sur l'iPad</h2>
             <div id="archive-list"></div>
         </div>
     </div>
 </div>
 
 <div class="actions-bar">
-    <button class="fab btn-save" onclick="saveData()">💾</button>
-    <button class="fab btn-print" onclick="window.print()">🖨️</button>
+    <button class="fab btn-save" onclick="saveData()" title="Enregistrer">💾</button>
+    <button class="fab btn-print" onclick="window.print()" title="Imprimer">🖨️</button>
 </div>
 
 <script>
@@ -258,7 +277,7 @@
         if(id === 'tab-archives') displayArchives();
     }
 
-    // GESTION DES TRAVAUX (Logique v6 conservée)
+    // --- GESTION TRAVAUX (Logique v6 conservée) ---
     function addTask(data = null) {
         const div = document.createElement('div');
         div.className = 'work-item';
@@ -307,7 +326,7 @@
         (opts[sel.value] || ["Standard"]).forEach(o => { let opt = document.createElement('option'); opt.text = o; fin.add(opt); });
     }
 
-    // LOGIQUE PLAN (v11 avec Texte Descriptif et Resizing proportionnel)
+    // --- LOGIQUE PLAN (v12) ---
     const canvas = document.getElementById('canvas-area');
     let zIdx = 100;
 
@@ -387,11 +406,11 @@
 
     function clearMap() { if(confirm("Effacer tout le plan ?")) canvas.innerHTML = ''; }
 
-    // SAUVEGARDE & ARCHIVES (Logique v6 avec tous les champs)
+    // --- SAUVEGARDE & BACKUP (Restauré v7) ---
     function saveData() {
         const record = {
             id: Date.now(),
-            nom: document.getElementById('c_nom').value || "Inconnu",
+            nom: document.getElementById('c_nom').value || "Sans-nom",
             date: document.getElementById('c_date_v').value || new Date().toLocaleDateString(),
             fields: {},
             tasks: Array.from(document.querySelectorAll('.work-item')).map(it => ({
@@ -406,18 +425,18 @@
                 fs: it.querySelector('.obj-emoji')?.style.fontSize || ""
             }))
         };
-        // Capture tous les champs de saisie
+        // Sauvegarde de tous les inputs par ID
         document.querySelectorAll('input, select, textarea').forEach(i => { if(i.id) record.fields[i.id] = i.value; });
         
-        const db = JSON.parse(localStorage.getItem('mapou_v11') || "[]");
+        const db = JSON.parse(localStorage.getItem('mapou_v12') || "[]");
         db.push(record);
-        localStorage.setItem('mapou_v11', JSON.stringify(db));
-        alert("Dossier Mapoupaysage enregistré !");
+        localStorage.setItem('mapou_v12', JSON.stringify(db));
+        alert("Enregistré dans l'iPad !");
     }
 
     function displayArchives() {
         const list = document.getElementById('archive-list'); list.innerHTML = "";
-        const db = JSON.parse(localStorage.getItem('mapou_v11') || "[]");
+        const db = JSON.parse(localStorage.getItem('mapou_v12') || "[]");
         db.reverse().forEach(c => {
             const div = document.createElement('div');
             div.style = "display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid #eee; background:white; margin-bottom:5px; border-radius:4px;";
@@ -428,7 +447,7 @@
     }
 
     function loadChantier(id) {
-        const db = JSON.parse(localStorage.getItem('mapou_v11') || "[]");
+        const db = JSON.parse(localStorage.getItem('mapou_v12') || "[]");
         const c = db.find(x => x.id === id); if(!c) return;
         for(let k in c.fields) if(document.getElementById(k)) document.getElementById(k).value = c.fields[k];
         document.getElementById('tasks-list').innerHTML = "";
@@ -436,6 +455,27 @@
         canvas.innerHTML = '';
         c.plan.forEach(p => addMapObj(p.cls, p.content, p.label, p));
         switchTab('tab-client', document.querySelector('.tab-btn'));
+    }
+
+    function exportBackup() {
+        const data = localStorage.getItem('mapou_v12') || "[]";
+        const blob = new Blob([data], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `backup_mapou_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+    }
+
+    function importBackup(input) {
+        const file = input.files[0]; if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            if(confirm("Écraser les données actuelles avec ce backup ?")) {
+                localStorage.setItem('mapou_v12', e.target.result);
+                displayArchives(); alert("Données restaurées !");
+            }
+        };
+        reader.readAsText(file);
     }
 
     document.getElementById('c_date_v').valueAsDate = new Date();
