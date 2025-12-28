@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mapoupaysage - App Interne v12</title>
+    <title>Mapoupaysage - App Interne v13</title>
     <style>
         :root { 
             --dark-green: #0a312d; 
@@ -38,7 +38,7 @@
         .tab-content { display: none; }
         .tab-content.show-content { display: block; }
 
-        /* CARTES ET FORMULAIRES */
+        /* CARTES */
         .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; border-top: 4px solid var(--light-green); }
         h2 { color: var(--dark-green); font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-top: 0; display: flex; align-items: center; gap: 10px; }
         
@@ -46,45 +46,52 @@
         .col { flex: 1; min-width: 180px; }
         label { display: block; margin-bottom: 5px; font-size: 0.75rem; font-weight: bold; color: #333; text-transform: uppercase; }
         input, select, textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; font-size: 1rem; background: #fff; }
-        textarea { resize: vertical; }
 
-        /* TRAVAUX */
         .work-item { border-left: 5px solid var(--gold); background: #fafafa; margin-bottom: 12px; padding: 15px; border-radius: 4px; position: relative; box-shadow: inset 0 0 5px rgba(0,0,0,0.05); }
         .btn-add { width: 100%; padding: 15px; background: var(--dark-green); color: var(--gold); border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1rem; }
         .btn-del-task { background: #ff5252; color: white; border: none; padding: 8px; border-radius: 4px; margin-top: 10px; width: 100%; font-weight: bold; }
 
-        /* PLAN GRAPHIQUE */
+        /* PLAN GRAPHIQUE AVEC ROTATION */
         #canvas-area { height: 65vh; background: white; background-image: radial-gradient(#ccc 1px, transparent 1px); background-size: 30px 30px; border: 2px solid var(--dark-green); border-radius: 8px; position: relative; overflow: hidden; touch-action: none; }
         .toolbar { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; white-space: nowrap; -webkit-overflow-scrolling: touch; }
         .tool { min-width: 65px; height: 65px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #ccc; border-radius: 8px; background: white; font-size: 22px; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .tool span { font-size: 10px; margin-top: 2px; color: var(--dark-green); font-weight: bold; }
         
-        /* Objets du plan */
-        .map-obj { position: absolute; min-width: 50px; min-height: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; user-select: none; box-sizing: border-box; overflow: hidden; }
+        .map-obj { position: absolute; min-width: 40px; min-height: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; user-select: none; box-sizing: border-box; }
         .obj-emoji { flex: 1; display: flex; align-items: center; justify-content: center; line-height: 1; pointer-events: none; }
-        .obj-label { font-size: 11px; font-weight: bold; background: rgba(255,255,255,0.8); color: #000; padding: 2px 5px; border-radius: 4px; margin-bottom: 3px; text-align: center; width: 85%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; pointer-events: none; border: 1px solid rgba(0,0,0,0.1); }
+        .obj-label { font-size: 11px; font-weight: bold; background: rgba(255,255,255,0.8); color: #000; padding: 2px 5px; border-radius: 4px; margin-bottom: 3px; text-align: center; width: 120%; overflow: visible; text-overflow: ellipsis; white-space: nowrap; pointer-events: none; border: 1px solid rgba(0,0,0,0.1); transform: translateY(15px); }
 
-        .resizer { width: 30px; height: 30px; background: var(--gold); border-radius: 50%; position: absolute; bottom: -8px; right: -8px; z-index: 1001; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .obj-del { width: 26px; height: 26px; background: #ff5252; color: white; border-radius: 50%; position: absolute; top: -8px; right: -8px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; z-index: 1001; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        /* POIGNÉES */
+        .resizer { width: 30px; height: 30px; background: var(--gold); border-radius: 50%; position: absolute; bottom: -12px; right: -12px; z-index: 1001; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .obj-del { width: 26px; height: 26px; background: #ff5252; color: white; border-radius: 50%; position: absolute; top: -12px; right: -12px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; z-index: 1001; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        
+        /* NOUVEAU : POIGNÉE ROTATION */
+        .rotator { width: 26px; height: 26px; background: var(--light-green); border-radius: 50%; position: absolute; top: -35px; left: 50%; transform: translateX(-50%); z-index: 1001; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; font-size:16px; color:white; }
+        .rotator::after { content: ''; position: absolute; top: 23px; left: 11px; width: 2px; height: 12px; background: var(--light-green); }
 
-        /* Styles de zones */
+        /* STYLES DES OBJETS */
         .style-maison { background: #b0bec5; border: 3px solid #546e7a; border-radius: 4px; }
-        .style-cloture { background: transparent; border: 2px dashed #795548; }
+        
+        /* Clôture : Trait épais hachuré */
+        .style-cloture { 
+            background: repeating-linear-gradient(90deg, #795548, #795548 10px, transparent 10px, transparent 15px);
+            border: 2px solid rgba(121, 85, 72, 0.3);
+            border-radius: 4px;
+        }
+        
         .style-dalle { background: #e0e0e0; border: 1px solid #9e9e9e; }
         .style-pelouse { background: #a5d6a7; border: 1px solid #4caf50; opacity: 0.8; }
         .style-arbre { background: rgba(76, 175, 80, 0.4); border: 2px solid var(--dark-green); border-radius: 50%; }
         .style-eau { background: #81d4fa; border: 1px solid #0288d1; border-radius: 50%; }
         .style-text { background: rgba(255,255,255,0.95); border: 1px solid var(--dark-green); font-size: 1rem !important; min-width: 100px; z-index: 1050; padding: 8px; border-radius: 4px; }
 
-        /* BOUTONS FLOTTANTS */
         .actions-bar { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 15px; z-index: 6000; }
         .fab { width: 65px; height: 65px; border-radius: 50%; border: none; color: white; font-size: 28px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .btn-save { background: var(--dark-green); color: var(--gold); }
         .btn-print { background: #333; }
 
-        /* IMPRESSION */
         @media print {
-            .tabs-nav, .actions-bar, .toolbar, .btn-add, .btn-del-task, .resizer, .obj-del, .logo-box { display: none !important; }
+            .tabs-nav, .actions-bar, .toolbar, .btn-add, .btn-del-task, .resizer, .obj-del, .rotator, .logo-box { display: none !important; }
             .tab-content { display: block !important; page-break-inside: avoid; margin-bottom: 25px; }
             #canvas-area { height: 17cm; border: 2px solid #000; page-break-before: always; }
             header { background: white; color: black; border-bottom: 2px solid black; }
@@ -125,48 +132,17 @@
             </div>
             <label>Adresse</label><input type="text" id="c_adr">
             <div class="row" style="margin-top:10px;">
-                <div class="col">
-                    <label>Stationnement</label>
-                    <select id="l_stat">
-                        <option>Facile / Devant</option>
-                        <option>Difficile / Rue étroite</option>
-                        <option>Éloigné (> 20 mètres)</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <label>Passage / Largeur</label>
-                    <select id="l_pass">
-                        <option>Passage libre (Illimité)</option>
-                        <option>Standard (> 1m)</option>
-                        <option>Étroit (< 80cm)</option>
-                        <option>Passage Portail</option>
-                        <option>Passage Garage / Porte</option>
-                    </select>
-                </div>
+                <div class="col"><label>Stationnement</label><select id="l_stat"><option>Facile / Devant</option><option>Difficile / Rue étroite</option><option>Éloigné (> 20 mètres)</option></select></div>
+                <div class="col"><label>Passage / Largeur</label><select id="l_pass"><option>Passage libre (Illimité)</option><option>Standard (> 1m)</option><option>Étroit (< 80cm)</option><option>Passage Portail</option><option>Passage Garage / Porte</option></select></div>
             </div>
             <div class="row">
-                <div class="col">
-                    <label>Réseaux Apparents</label>
-                    <select id="l_res">
-                        <option>Aucun</option>
-                        <option>Câbles, tuyau, bornes ouvertes</option>
-                        <option>Arrosage aérien</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <label>Gestion Déchets</label>
-                    <select id="l_dech">
-                        <option>Évacuation déchetterie</option>
-                        <option>Bord de route</option>
-                        <option>Broyage / Mulching</option>
-                        <option>Stockage sur place</option>
-                    </select>
-                </div>
+                <div class="col"><label>Réseaux Apparents</label><select id="l_res"><option>Aucun</option><option>Câbles, tuyau, bornes ouvertes</option><option>Arrosage aérien</option></select></div>
+                <div class="col"><label>Gestion Déchets</label><select id="l_dech"><option>Évacuation déchetterie</option><option>Bord de route</option><option>Broyage / Mulching</option><option>Stockage sur place</option></select></div>
             </div>
         </div>
         <div class="card">
             <h2>✍️ Validation</h2>
-            <div style="height:50px; border:1px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#999;">Espace Signature (Sur papier après impression)</div>
+            <div style="height:50px; border:1px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#999;">Espace Signature (Sur papier)</div>
         </div>
     </div>
 
@@ -174,18 +150,7 @@
         <div class="card">
             <h2>📜 Contrat & Fréquence</h2>
             <div class="row">
-                <div class="col">
-                    <label>Type de Contrat</label>
-                    <select id="d_contrat">
-                        <option>Ponctuel</option>
-                        <option>Quinzomadaire</option>
-                        <option>Trihebdomadaire</option>
-                        <option>Mensuel</option>
-                        <option>Bimestriel</option>
-                        <option>Trimestriel</option>
-                        <option>Semestriel</option>
-                    </select>
-                </div>
+                <div class="col"><label>Type de Contrat</label><select id="d_contrat"><option>Ponctuel</option><option>Quinzomadaire</option><option>Trihebdomadaire</option><option>Mensuel</option><option>Bimestriel</option><option>Trimestriel</option><option>Semestriel</option></select></div>
                 <div class="col"><label>Heures & Jours estimés</label><input type="text" id="d_heures"></div>
             </div>
             <label>Doléances / Besoins Client</label><textarea id="d_notes" rows="4"></textarea>
@@ -197,26 +162,10 @@
         <div class="card">
             <h2>🌍 Terrain & Sol</h2>
             <div class="row">
-                <div class="col">
-                    <label>Topographie</label>
-                    <select id="s_topo">
-                        <option>Plat (0%)</option>
-                        <option>Diversifié (Plat + Talus + Pentes)</option>
-                        <option>Pente douce</option>
-                        <option>Talus raide</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <label>Texture Sol</label>
-                    <select id="s_texture">
-                        <option>Argileux</option>
-                        <option>Sableux</option>
-                        <option>Limoneux</option>
-                        <option>Caillouteux</option>
-                    </select>
-                </div>
+                <div class="col"><label>Topographie</label><select id="s_topo"><option>Plat (0%)</option><option>Diversifié (Plat + Talus + Pentes)</option><option>Pente douce</option><option>Talus raide</option></select></div>
+                <div class="col"><label>Texture Sol</label><select id="s_texture"><option>Argileux</option><option>Sableux</option><option>Limoneux</option><option>Caillouteux</option></select></div>
             </div>
-            <label>Notes Agronomiques (Ph, humidité...)</label><textarea id="s_notes" rows="3"></textarea>
+            <label>Notes Agronomiques</label><textarea id="s_notes" rows="3"></textarea>
         </div>
     </div>
 
@@ -232,9 +181,9 @@
         <div class="card">
             <div class="toolbar">
                 <div class="tool" onclick="addMapObj('style-text', 'Note', 'Note')">📝<span>Note</span></div>
+                <div class="tool" onclick="addMapObj('style-cloture', '', 'Clôture')">⛓️<span>Clôture</span></div>
                 <div class="tool" onclick="addMapObj('style-maison', '🏠', 'Maison')">🏠<span>Maison</span></div>
-                <div class="tool" onclick="addMapObj('style-cloture', '⛓️', 'Clôture')">⛓️<span>Clôture</span></div>
-                <div class="tool" onclick="addMapObj('style-dalle', '⬜', 'Dalle/Terrasse')">⬜<span>Dalle</span></div>
+                <div class="tool" onclick="addMapObj('style-dalle', '⬜', 'Dalle')">⬜<span>Dalle</span></div>
                 <div class="tool" onclick="addMapObj('style-pelouse', '🟩', 'Pelouse')">🟩<span>Pelouse</span></div>
                 <div class="tool" onclick="addMapObj('style-arbre', '🌳', 'Arbre')">🌳<span>Arbre</span></div>
                 <div class="tool" onclick="addMapObj('style-massif', '🌸', 'Massif')">🌸<span>Massif</span></div>
@@ -248,13 +197,12 @@
 
     <div id="tab-archives" class="tab-content">
         <div class="card">
-            <h2>Coffre-fort de Données</h2>
+            <h2>Coffre-fort</h2>
             <div class="row">
-                <div class="col"><button class="btn-add" style="background:#1976d2" onclick="exportBackup()">📤 Sauvegarder tout (Backup)</button></div>
+                <div class="col"><button class="btn-add" style="background:#1976d2" onclick="exportBackup()">📤 Sauvegarder (Backup)</button></div>
                 <div class="col"><button class="btn-add" style="background:#546e7a" onclick="document.getElementById('importFile').click()">📥 Restaurer Backup</button></div>
                 <input type="file" id="importFile" style="display:none" onchange="importBackup(this)">
             </div>
-            <p style="font-size:0.8rem; color:#666;">Utilisez le backup régulièrement pour sécuriser vos données hors de l'iPad.</p>
         </div>
         <div class="card">
             <h2>Dossiers sur l'iPad</h2>
@@ -264,8 +212,8 @@
 </div>
 
 <div class="actions-bar">
-    <button class="fab btn-save" onclick="saveData()" title="Enregistrer">💾</button>
-    <button class="fab btn-print" onclick="window.print()" title="Imprimer">🖨️</button>
+    <button class="fab btn-save" onclick="saveData()">💾</button>
+    <button class="fab btn-print" onclick="window.print()">🖨️</button>
 </div>
 
 <script>
@@ -277,34 +225,28 @@
         if(id === 'tab-archives') displayArchives();
     }
 
-    // --- GESTION TRAVAUX (Logique v6 conservée) ---
     function addTask(data = null) {
         const div = document.createElement('div');
         div.className = 'work-item';
         div.innerHTML = `
             <div class="row">
-                <div class="col">
-                    <label>Type de Travail</label>
-                    <select class="t-type" onchange="updateFinitions(this)">
-                        <option value="taille" ${data?.type=='taille'?'selected':''}>Taille</option>
-                        <option value="tonte" ${data?.type=='tonte'?'selected':''}>Tonte / Gazon</option>
-                        <option value="nettoyage" ${data?.type=='nettoyage'?'selected':''}>Nettoiement / Éclaircie</option>
-                        <option value="elagage" ${data?.type=='elagage'?'selected':''}>Élagage / Abattage</option>
-                        <option value="debrou" ${data?.type=='debrou'?'selected':''}>Débroussaillage</option>
-                        <option value="creation" ${data?.type=='creation'?'selected':''}>Aménagement / Création</option>
-                    </select>
-                </div>
+                <div class="col"><label>Type</label><select class="t-type" onchange="updateFinitions(this)">
+                    <option value="taille" ${data?.type=='taille'?'selected':''}>Taille</option>
+                    <option value="tonte" ${data?.type=='tonte'?'selected':''}>Tonte</option>
+                    <option value="nettoyage" ${data?.type=='nettoyage'?'selected':''}>Nettoiement</option>
+                    <option value="elagage" ${data?.type=='elagage'?'selected':''}>Élagage</option>
+                    <option value="debrou" ${data?.type=='debrou'?'selected':''}>Débroussaillage</option>
+                    <option value="creation" ${data?.type=='creation'?'selected':''}>Création</option>
+                </select></div>
                 <div class="col"><label>Finition</label><select class="t-fin"><option>${data?.fin || 'Standard'}</option></select></div>
             </div>
             <div class="row">
                 <div class="col"><input type="number" class="t-qty" value="${data?.qty||''}" placeholder="Qté"></div>
-                <div class="col"><label>Unité</label>
-                    <select class="t-unit">
-                        <option ${data?.unit=='m²'?'selected':''}>m²</option><option ${data?.unit=='ml'?'selected':''}>ml</option>
-                        <option ${data?.unit=='m³'?'selected':''}>m³</option><option ${data?.unit=='U'?'selected':''}>U</option>
-                        <option ${data?.unit=='h'?'selected':''}>h</option>
-                    </select>
-                </div>
+                <div class="col"><label>Unité</label><select class="t-unit">
+                    <option ${data?.unit=='m²'?'selected':''}>m²</option><option ${data?.unit=='ml'?'selected':''}>ml</option>
+                    <option ${data?.unit=='m³'?'selected':''}>m³</option><option ${data?.unit=='U'?'selected':''}>U</option>
+                    <option ${data?.unit=='h'?'selected':''}>h</option>
+                </select></div>
             </div>
             <button class="btn-del-task" onclick="this.parentElement.remove()">Supprimer</button>
         `;
@@ -326,7 +268,7 @@
         (opts[sel.value] || ["Standard"]).forEach(o => { let opt = document.createElement('option'); opt.text = o; fin.add(opt); });
     }
 
-    // --- LOGIQUE PLAN (v12) ---
+    // PLAN ET ROTATION
     const canvas = document.getElementById('canvas-area');
     let zIdx = 100;
 
@@ -343,74 +285,98 @@
             emojiSpan.className = 'obj-emoji';
             emojiSpan.innerHTML = content;
             el.appendChild(emojiSpan);
-
             const labelDiv = document.createElement('div');
             labelDiv.className = 'obj-label';
             labelDiv.innerText = labelText;
             el.appendChild(labelDiv);
         }
 
-        el.style.width = savedData?.w || (isText ? "120px" : "80px");
-        el.style.height = savedData?.h || (isText ? "60px" : "80px");
+        // Cas spécial Clôture : long et fin par défaut
+        let defaultW = (cls === 'style-cloture') ? "150px" : (isText ? "120px" : "80px");
+        let defaultH = (cls === 'style-cloture') ? "15px" : (isText ? "60px" : "80px");
+
+        el.style.width = savedData?.w || defaultW;
+        el.style.height = savedData?.h || defaultH;
         el.style.top = savedData?.t || "100px";
         el.style.left = savedData?.l || "100px";
         
-        if(!isText) {
+        if(savedData?.rot) el.style.transform = savedData.rot; // Applique la rotation
+
+        if(!isText && !cls.includes('cloture')) {
             const emoji = el.querySelector('.obj-emoji');
             emoji.style.fontSize = savedData?.fs || "45px";
         }
 
+        // Boutons de contrôle
         const del = document.createElement('div'); del.className = "obj-del"; del.innerHTML = "X";
         del.onclick = (e) => { e.stopPropagation(); el.remove(); }; el.appendChild(del);
 
-        const resizer = document.createElement('div'); resizer.className = "resizer"; el.appendChild(resizer);
+        const res = document.createElement('div'); res.className = "resizer"; el.appendChild(res);
+
+        const rot = document.createElement('div'); rot.className = "rotator"; rot.innerHTML = "⟳"; el.appendChild(rot);
 
         setupDraggable(el);
-        setupResizer(el, resizer, isText);
+        setupResizer(el, res, isText, cls);
+        setupRotator(el, rot);
         canvas.appendChild(el);
     }
 
     function setupDraggable(el) {
         let isM = false, ox, oy;
         el.addEventListener('touchstart', (e) => {
-            if(e.target.className.includes('resizer') || e.target.className.includes('obj-del')) return;
+            if(e.target.className.match(/resizer|obj-del|rotator/)) return;
             isM = true; const t = e.touches[0];
             ox = t.clientX - el.offsetLeft; oy = t.clientY - el.offsetTop;
             el.style.zIndex = zIdx++;
-        }, {passive: false});
+        }, {passive:false});
         document.addEventListener('touchmove', (e) => {
             if(!isM) return; const t = e.touches[0];
             el.style.left = (t.clientX - ox) + 'px'; el.style.top = (t.clientY - oy) + 'px';
-        }, {passive: false});
+        }, {passive:false});
         document.addEventListener('touchend', () => isM = false);
     }
 
-    function setupResizer(el, res, isText) {
+    function setupResizer(el, res, isText, cls) {
         let isR = false;
-        res.addEventListener('touchstart', (e) => { isR = true; e.preventDefault(); e.stopPropagation(); }, {passive: false});
+        res.addEventListener('touchstart', (e) => { isR = true; e.preventDefault(); e.stopPropagation(); }, {passive:false});
         document.addEventListener('touchmove', (e) => {
-            if(!isR) return;
-            const t = e.touches[0];
+            if(!isR) return; const t = e.touches[0];
             const rect = canvas.getBoundingClientRect();
+            // Calcul simple sans rotation
             const nw = t.clientX - rect.left - parseFloat(el.style.left);
             const nh = t.clientY - rect.top - parseFloat(el.style.top);
-            if(nw > 40) el.style.width = nw + 'px';
-            if(nh > 40) el.style.height = nh + 'px';
-            if(!isText) {
-                const emoji = el.querySelector('.obj-emoji');
-                emoji.style.fontSize = (Math.min(nw, nh) * 0.6) + 'px';
+            
+            if(nw > 20) el.style.width = nw + 'px';
+            if(nh > 10) el.style.height = nh + 'px';
+            
+            if(!isText && !cls.includes('cloture')) {
+                el.querySelector('.obj-emoji').style.fontSize = (Math.min(nw, nh) * 0.6) + 'px';
             }
-        }, {passive: false});
+        }, {passive:false});
         document.addEventListener('touchend', () => isR = false);
     }
 
-    function clearMap() { if(confirm("Effacer tout le plan ?")) canvas.innerHTML = ''; }
+    function setupRotator(el, rot) {
+        let isRot = false;
+        rot.addEventListener('touchstart', (e) => { isRot = true; e.preventDefault(); e.stopPropagation(); }, {passive:false});
+        document.addEventListener('touchmove', (e) => {
+            if(!isRot) return;
+            const t = e.touches[0];
+            const rect = el.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            const angle = Math.atan2(t.clientY - cy, t.clientX - cx) * 180 / Math.PI;
+            el.style.transform = `rotate(${angle + 90}deg)`;
+        }, {passive:false});
+        document.addEventListener('touchend', () => isRot = false);
+    }
 
-    // --- SAUVEGARDE & BACKUP (Restauré v7) ---
+    function clearMap() { if(confirm("Effacer tout ?")) canvas.innerHTML = ''; }
+
     function saveData() {
         const record = {
             id: Date.now(),
-            nom: document.getElementById('c_nom').value || "Sans-nom",
+            nom: document.getElementById('c_nom').value || "Inconnu",
             date: document.getElementById('c_date_v').value || new Date().toLocaleDateString(),
             fields: {},
             tasks: Array.from(document.querySelectorAll('.work-item')).map(it => ({
@@ -419,24 +385,23 @@
             })),
             plan: Array.from(document.querySelectorAll('.map-obj')).map(it => ({
                 cls: it.classList[1],
-                content: it.classList.contains('style-text') ? it.innerText.replace('X','') : it.querySelector('.obj-emoji').innerHTML,
+                content: it.classList.contains('style-text') ? it.innerText.replace('X','') : it.querySelector('.obj-emoji')?.innerHTML || "",
                 label: it.querySelector('.obj-label')?.innerText || "",
                 w: it.style.width, h: it.style.height, t: it.style.top, l: it.style.left,
+                rot: it.style.transform,
                 fs: it.querySelector('.obj-emoji')?.style.fontSize || ""
             }))
         };
-        // Sauvegarde de tous les inputs par ID
         document.querySelectorAll('input, select, textarea').forEach(i => { if(i.id) record.fields[i.id] = i.value; });
-        
-        const db = JSON.parse(localStorage.getItem('mapou_v12') || "[]");
+        const db = JSON.parse(localStorage.getItem('mapou_v13') || "[]");
         db.push(record);
-        localStorage.setItem('mapou_v12', JSON.stringify(db));
-        alert("Enregistré dans l'iPad !");
+        localStorage.setItem('mapou_v13', JSON.stringify(db));
+        alert("Données sécurisées sur iPad !");
     }
 
     function displayArchives() {
         const list = document.getElementById('archive-list'); list.innerHTML = "";
-        const db = JSON.parse(localStorage.getItem('mapou_v12') || "[]");
+        const db = JSON.parse(localStorage.getItem('mapou_v13') || "[]");
         db.reverse().forEach(c => {
             const div = document.createElement('div');
             div.style = "display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid #eee; background:white; margin-bottom:5px; border-radius:4px;";
@@ -447,7 +412,7 @@
     }
 
     function loadChantier(id) {
-        const db = JSON.parse(localStorage.getItem('mapou_v12') || "[]");
+        const db = JSON.parse(localStorage.getItem('mapou_v13') || "[]");
         const c = db.find(x => x.id === id); if(!c) return;
         for(let k in c.fields) if(document.getElementById(k)) document.getElementById(k).value = c.fields[k];
         document.getElementById('tasks-list').innerHTML = "";
@@ -458,7 +423,7 @@
     }
 
     function exportBackup() {
-        const data = localStorage.getItem('mapou_v12') || "[]";
+        const data = localStorage.getItem('mapou_v13') || "[]";
         const blob = new Blob([data], {type: "application/json"});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -470,9 +435,9 @@
         const file = input.files[0]; if(!file) return;
         const reader = new FileReader();
         reader.onload = (e) => {
-            if(confirm("Écraser les données actuelles avec ce backup ?")) {
-                localStorage.setItem('mapou_v12', e.target.result);
-                displayArchives(); alert("Données restaurées !");
+            if(confirm("Écraser les données ?")) {
+                localStorage.setItem('mapou_v13', e.target.result);
+                displayArchives(); alert("Restauré !");
             }
         };
         reader.readAsText(file);
