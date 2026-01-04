@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mapoupaysage - App Interne v13</title>
+    <title>Mapoupaysage - Diagnostic V14</title>
     <style>
         :root { 
             --dark-green: #0a312d; 
@@ -13,89 +13,89 @@
             --border: #ddd;
         }
 
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg-gray); padding-bottom: 80px; touch-action: manipulation; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg-gray); padding-bottom: 100px; touch-action: manipulation; }
         
+        /* HEADER */
         header { 
             background: var(--dark-green); 
             color: white; padding: 15px; text-align: center; 
             border-bottom: 4px solid var(--gold);
         }
         .logo-box {
-            width: 85px; height: 85px; margin: 0 auto 10px;
+            width: 80px; height: 80px; margin: 0 auto 5px;
             background: white; border-radius: 50%; border: 2px solid var(--gold);
             overflow: hidden; display: flex; align-items: center; justify-content: center;
         }
         .logo-box img { width: 100%; height: 100%; object-fit: cover; }
-        header h1 { margin: 0; font-size: 1.4rem; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
-        .slogan { font-size: 0.75rem; color: var(--gold); font-weight: bold; margin-top: 5px; opacity: 0.9; }
+        header h1 { margin: 0; font-size: 1.4rem; color: var(--gold); letter-spacing: 1px; text-transform: uppercase; }
+        .slogan { font-size: 0.7rem; opacity: 0.9; font-weight: bold; }
 
         /* NAVIGATION */
         .tabs-nav { display: flex; background: var(--dark-green); overflow-x: auto; border-bottom: 1px solid var(--gold); position: sticky; top: 0; z-index: 5000; }
-        .tab-btn { flex: 1; min-width: 90px; padding: 15px 5px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #fff; font-size: 0.85rem; opacity: 0.6; transition: 0.3s; }
+        .tab-btn { flex: 1; min-width: 90px; padding: 15px 5px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #fff; font-size: 0.8rem; opacity: 0.6; transition: 0.3s; }
         .tab-btn.active-tab { opacity: 1; color: var(--gold); border-bottom: 3px solid var(--gold); background: rgba(255,255,255,0.05); }
 
         .container { max-width: 900px; margin: 15px auto; padding: 0 10px; }
         .tab-content { display: none; }
         .tab-content.show-content { display: block; }
 
-        /* CARTES */
+        /* CARTES ET INPUTS */
         .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; border-top: 4px solid var(--light-green); }
         h2 { color: var(--dark-green); font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-top: 0; display: flex; align-items: center; gap: 10px; }
         
         .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
-        .col { flex: 1; min-width: 180px; }
+        .col { flex: 1; min-width: 170px; }
         label { display: block; margin-bottom: 5px; font-size: 0.75rem; font-weight: bold; color: #333; text-transform: uppercase; }
         input, select, textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; font-size: 1rem; background: #fff; }
 
-        .work-item { border-left: 5px solid var(--gold); background: #fafafa; margin-bottom: 12px; padding: 15px; border-radius: 4px; position: relative; box-shadow: inset 0 0 5px rgba(0,0,0,0.05); }
+        /* TRAVAUX */
+        .work-item { border-left: 5px solid var(--gold); background: #fafafa; margin-bottom: 12px; padding: 15px; border-radius: 4px; position: relative; }
         .btn-add { width: 100%; padding: 15px; background: var(--dark-green); color: var(--gold); border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1rem; }
         .btn-del-task { background: #ff5252; color: white; border: none; padding: 8px; border-radius: 4px; margin-top: 10px; width: 100%; font-weight: bold; }
 
-        /* PLAN GRAPHIQUE AVEC ROTATION */
+        /* PLAN GRAPHIQUE */
         #canvas-area { height: 65vh; background: white; background-image: radial-gradient(#ccc 1px, transparent 1px); background-size: 30px 30px; border: 2px solid var(--dark-green); border-radius: 8px; position: relative; overflow: hidden; touch-action: none; }
         .toolbar { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; white-space: nowrap; -webkit-overflow-scrolling: touch; }
         .tool { min-width: 65px; height: 65px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #ccc; border-radius: 8px; background: white; font-size: 22px; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .tool span { font-size: 10px; margin-top: 2px; color: var(--dark-green); font-weight: bold; }
         
-        .map-obj { position: absolute; min-width: 40px; min-height: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; user-select: none; box-sizing: border-box; }
+        /* Objets Plan */
+        .map-obj { position: absolute; min-width: 50px; min-height: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; user-select: none; box-sizing: border-box; }
         .obj-emoji { flex: 1; display: flex; align-items: center; justify-content: center; line-height: 1; pointer-events: none; }
-        .obj-label { font-size: 11px; font-weight: bold; background: rgba(255,255,255,0.8); color: #000; padding: 2px 5px; border-radius: 4px; margin-bottom: 3px; text-align: center; width: 120%; overflow: visible; text-overflow: ellipsis; white-space: nowrap; pointer-events: none; border: 1px solid rgba(0,0,0,0.1); transform: translateY(15px); }
+        .obj-label { font-size: 10px; font-weight: bold; background: rgba(255,255,255,0.8); color: #000; padding: 2px 4px; border-radius: 4px; margin-bottom: 2px; pointer-events: none; white-space: nowrap; border: 1px solid #ccc; transform: translateY(15px); }
 
-        /* POIGNÉES */
-        .resizer { width: 30px; height: 30px; background: var(--gold); border-radius: 50%; position: absolute; bottom: -12px; right: -12px; z-index: 1001; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .obj-del { width: 26px; height: 26px; background: #ff5252; color: white; border-radius: 50%; position: absolute; top: -12px; right: -12px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; z-index: 1001; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        
-        /* NOUVEAU : POIGNÉE ROTATION */
-        .rotator { width: 26px; height: 26px; background: var(--light-green); border-radius: 50%; position: absolute; top: -35px; left: 50%; transform: translateX(-50%); z-index: 1001; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; font-size:16px; color:white; }
-        .rotator::after { content: ''; position: absolute; top: 23px; left: 11px; width: 2px; height: 12px; background: var(--light-green); }
+        /* Contrôles Tactiles */
+        .resizer { width: 30px; height: 30px; background: var(--gold); border-radius: 50%; position: absolute; bottom: -10px; right: -10px; z-index: 1001; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .obj-del { width: 26px; height: 26px; background: #ff5252; color: white; border-radius: 50%; position: absolute; top: -10px; right: -10px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; z-index: 1001; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .rotator { width: 26px; height: 26px; background: var(--light-green); border-radius: 50%; position: absolute; top: -35px; left: 50%; transform: translateX(-50%); z-index: 1001; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; color:white; font-size:16px; }
+        .rotator::after { content: ''; position: absolute; top: 24px; left: 11px; width: 2px; height: 10px; background: var(--light-green); }
 
-        /* STYLES DES OBJETS */
-        .style-maison { background: #b0bec5; border: 3px solid #546e7a; border-radius: 4px; }
-        
-        /* Clôture : Trait épais hachuré */
-        .style-cloture { 
-            background: repeating-linear-gradient(90deg, #795548, #795548 10px, transparent 10px, transparent 15px);
-            border: 2px solid rgba(121, 85, 72, 0.3);
-            border-radius: 4px;
-        }
-        
+        /* Styles Spécifiques */
+        .style-maison { background: #cfd8dc; border: 3px solid #546e7a; border-radius: 4px; }
+        .style-cloture { background: repeating-linear-gradient(90deg, #795548, #795548 10px, transparent 10px, transparent 15px); border: 2px solid rgba(121, 85, 72, 0.3); border-radius: 4px; }
         .style-dalle { background: #e0e0e0; border: 1px solid #9e9e9e; }
         .style-pelouse { background: #a5d6a7; border: 1px solid #4caf50; opacity: 0.8; }
         .style-arbre { background: rgba(76, 175, 80, 0.4); border: 2px solid var(--dark-green); border-radius: 50%; }
-        .style-eau { background: #81d4fa; border: 1px solid #0288d1; border-radius: 50%; }
-        .style-text { background: rgba(255,255,255,0.95); border: 1px solid var(--dark-green); font-size: 1rem !important; min-width: 100px; z-index: 1050; padding: 8px; border-radius: 4px; }
+        .style-text { background: rgba(255,255,255,0.95); border: 1px solid var(--dark-green); font-size: 1rem !important; min-width: 100px; padding: 8px; border-radius: 4px; z-index: 200; }
 
+        /* PHOTOS */
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 15px; }
+        .photo-item { position: relative; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; height: 150px; }
+        .photo-item img { width: 100%; height: 100%; object-fit: cover; }
+        .btn-del-photo { position: absolute; top: 5px; right: 5px; background: red; color: white; border: none; width: 25px; height: 25px; border-radius: 50%; font-weight: bold; cursor: pointer; }
+
+        /* ACTIONS */
         .actions-bar { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 15px; z-index: 6000; }
         .fab { width: 65px; height: 65px; border-radius: 50%; border: none; color: white; font-size: 28px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .btn-save { background: var(--dark-green); color: var(--gold); }
-        .btn-print { background: #333; }
 
         @media print {
-            .tabs-nav, .actions-bar, .toolbar, .btn-add, .btn-del-task, .resizer, .obj-del, .rotator, .logo-box { display: none !important; }
-            .tab-content { display: block !important; page-break-inside: avoid; margin-bottom: 25px; }
+            .tabs-nav, .actions-bar, .toolbar, .btn-add, .btn-del-task, .resizer, .obj-del, .rotator, .btn-del-photo, .btn-import-photo { display: none !important; }
+            .tab-content { display: block !important; page-break-inside: avoid; margin-bottom: 20px; }
             #canvas-area { height: 17cm; border: 2px solid #000; page-break-before: always; }
             header { background: white; color: black; border-bottom: 2px solid black; }
-            header h1 { color: black; }
+            h1 { color: black; }
+            .photo-grid { grid-template-columns: repeat(2, 1fr); }
+            .photo-item { height: 200px; border: 1px solid #000; }
         }
     </style>
 </head>
@@ -110,12 +110,13 @@
 </header>
 
 <div class="tabs-nav">
-    <button class="tab-btn active-tab" onclick="switchTab('tab-client', this)">1. Client</button>
-    <button class="tab-btn" onclick="switchTab('tab-doleances', this)">2. Doléances</button>
-    <button class="tab-btn" onclick="switchTab('tab-station', this)">3. Sol/Station</button>
-    <button class="tab-btn" onclick="switchTab('tab-travaux', this)">4. Travaux</button>
-    <button class="tab-btn" onclick="switchTab('tab-plan', this)">5. Plan</button>
-    <button class="tab-btn" onclick="switchTab('tab-archives', this)" style="background: rgba(251,192,45,0.15);">📁 Archives</button>
+    <button class="tab-btn active-tab" onclick="switchTab('tab-client', this)">Client</button>
+    <button class="tab-btn" onclick="switchTab('tab-doleances', this)">Doléances</button>
+    <button class="tab-btn" onclick="switchTab('tab-station', this)">Station</button>
+    <button class="tab-btn" onclick="switchTab('tab-travaux', this)">Travaux</button>
+    <button class="tab-btn" onclick="switchTab('tab-plan', this)">Plan</button>
+    <button class="tab-btn" onclick="switchTab('tab-photos', this)">Photos</button>
+    <button class="tab-btn" onclick="switchTab('tab-archives', this)" style="background: rgba(251,192,45,0.15);">Archives</button>
 </div>
 
 <div class="container">
@@ -127,43 +128,43 @@
                 <div class="col"><label>Tél</label><input type="tel" id="c_tel"></div>
             </div>
             <div class="row">
-                <div class="col"><label>Date de Visite</label><input type="date" id="c_date_v"></div>
-                <div class="col"><label>Chantier souhaité</label><input type="date" id="c_date_c"></div>
+                <div class="col"><label>Date Visite</label><input type="date" id="c_date_v"></div>
+                <div class="col"><label>Chantier Souhaité</label><input type="date" id="c_date_c"></div>
             </div>
             <label>Adresse</label><input type="text" id="c_adr">
             <div class="row" style="margin-top:10px;">
-                <div class="col"><label>Stationnement</label><select id="l_stat"><option>Facile / Devant</option><option>Difficile / Rue étroite</option><option>Éloigné (> 20 mètres)</option></select></div>
-                <div class="col"><label>Passage / Largeur</label><select id="l_pass"><option>Passage libre (Illimité)</option><option>Standard (> 1m)</option><option>Étroit (< 80cm)</option><option>Passage Portail</option><option>Passage Garage / Porte</option></select></div>
+                <div class="col"><label>Stationnement</label><select id="l_stat"><option>Facile / Devant</option><option>Difficile / Rue étroite</option><option>Éloigné (> 20m)</option></select></div>
+                <div class="col"><label>Passage</label><select id="l_pass"><option>Libre</option><option>Standard (>1m)</option><option>Étroit (<80cm)</option><option>Portail</option><option>Garage/Porte</option></select></div>
             </div>
             <div class="row">
-                <div class="col"><label>Réseaux Apparents</label><select id="l_res"><option>Aucun</option><option>Câbles, tuyau, bornes ouvertes</option><option>Arrosage aérien</option></select></div>
-                <div class="col"><label>Gestion Déchets</label><select id="l_dech"><option>Évacuation déchetterie</option><option>Bord de route</option><option>Broyage / Mulching</option><option>Stockage sur place</option></select></div>
+                <div class="col"><label>Réseaux</label><select id="l_res"><option>Aucun</option><option>Câbles/Tuyaux/Bornes</option><option>Arrosage aérien</option></select></div>
+                <div class="col"><label>Déchets</label><select id="l_dech"><option>Déchetterie</option><option>Bord de route</option><option>Broyage</option><option>Stockage sur place</option></select></div>
             </div>
         </div>
         <div class="card">
             <h2>✍️ Validation</h2>
-            <div style="height:50px; border:1px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#999;">Espace Signature (Sur papier)</div>
+            <div style="height:60px; border:2px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#999; font-weight:bold;">SIGNATURE CLIENT</div>
         </div>
     </div>
 
     <div id="tab-doleances" class="tab-content">
         <div class="card">
-            <h2>📜 Contrat & Fréquence</h2>
+            <h2>📜 Besoins & Contrat</h2>
             <div class="row">
-                <div class="col"><label>Type de Contrat</label><select id="d_contrat"><option>Ponctuel</option><option>Quinzomadaire</option><option>Trihebdomadaire</option><option>Mensuel</option><option>Bimestriel</option><option>Trimestriel</option><option>Semestriel</option></select></div>
-                <div class="col"><label>Heures & Jours estimés</label><input type="text" id="d_heures"></div>
+                <div class="col"><label>Contrat</label><select id="d_contrat"><option>Ponctuel</option><option>Quinzomadaire</option><option>Trihebdomadaire</option><option>Mensuel</option><option>Bimestriel</option><option>Trimestriel</option><option>Semestriel</option></select></div>
+                <div class="col"><label>Heures/Jours</label><input type="text" id="d_heures"></div>
             </div>
-            <label>Doléances / Besoins Client</label><textarea id="d_notes" rows="4"></textarea>
-            <label>Budget prévisionnel (€)</label><input type="number" id="d_budget">
+            <label>Notes / Doléances</label><textarea id="d_notes" rows="4"></textarea>
+            <label>Budget (€)</label><input type="number" id="d_budget">
         </div>
     </div>
 
     <div id="tab-station" class="tab-content">
         <div class="card">
-            <h2>🌍 Terrain & Sol</h2>
+            <h2>🌍 Sol & Topographie</h2>
             <div class="row">
-                <div class="col"><label>Topographie</label><select id="s_topo"><option>Plat (0%)</option><option>Diversifié (Plat + Talus + Pentes)</option><option>Pente douce</option><option>Talus raide</option></select></div>
-                <div class="col"><label>Texture Sol</label><select id="s_texture"><option>Argileux</option><option>Sableux</option><option>Limoneux</option><option>Caillouteux</option></select></div>
+                <div class="col"><label>Topographie</label><select id="s_topo"><option>Plat (0%)</option><option>Diversifié</option><option>Pente douce</option><option>Talus raide</option></select></div>
+                <div class="col"><label>Texture</label><select id="s_texture"><option>Argileux</option><option>Sableux</option><option>Limoneux</option><option>Caillouteux</option></select></div>
             </div>
             <label>Notes Agronomiques</label><textarea id="s_notes" rows="3"></textarea>
         </div>
@@ -171,9 +172,9 @@
 
     <div id="tab-travaux" class="tab-content">
         <div class="card">
-            <h2>🛠️ Liste des Prestations</h2>
+            <h2>🛠️ Prestations</h2>
             <div id="tasks-list"></div>
-            <button class="btn-add" onclick="addTask()">+ Ajouter un travail</button>
+            <button class="btn-add" onclick="addTask()">+ Ajouter une tâche</button>
         </div>
     </div>
 
@@ -195,25 +196,34 @@
         </div>
     </div>
 
+    <div id="tab-photos" class="tab-content">
+        <div class="card">
+            <h2>📷 Photos du Chantier</h2>
+            <button class="btn-add btn-import-photo" onclick="document.getElementById('photoInput').click()">+ Prendre / Ajouter Photo</button>
+            <input type="file" id="photoInput" style="display:none" accept="image/*" multiple onchange="handlePhotos(this)">
+            <div id="photo-container" class="photo-grid"></div>
+        </div>
+    </div>
+
     <div id="tab-archives" class="tab-content">
         <div class="card">
             <h2>Coffre-fort</h2>
             <div class="row">
-                <div class="col"><button class="btn-add" style="background:#1976d2" onclick="exportBackup()">📤 Sauvegarder (Backup)</button></div>
+                <div class="col"><button class="btn-add" style="background:#1976d2" onclick="exportBackup()">📤 Sauvegarder tout (JSON)</button></div>
                 <div class="col"><button class="btn-add" style="background:#546e7a" onclick="document.getElementById('importFile').click()">📥 Restaurer Backup</button></div>
                 <input type="file" id="importFile" style="display:none" onchange="importBackup(this)">
             </div>
         </div>
         <div class="card">
-            <h2>Dossiers sur l'iPad</h2>
+            <h2>Dossiers iPad</h2>
             <div id="archive-list"></div>
         </div>
     </div>
 </div>
 
 <div class="actions-bar">
-    <button class="fab btn-save" onclick="saveData()">💾</button>
-    <button class="fab btn-print" onclick="window.print()">🖨️</button>
+    <button class="fab btn-save" style="background:var(--dark-green); color:var(--gold);" onclick="saveData()">💾</button>
+    <button class="fab btn-print" style="background:#333;" onclick="window.print()">🖨️</button>
 </div>
 
 <script>
@@ -225,6 +235,7 @@
         if(id === 'tab-archives') displayArchives();
     }
 
+    // --- 1. TRAVAUX ---
     function addTask(data = null) {
         const div = document.createElement('div');
         div.className = 'work-item';
@@ -233,7 +244,7 @@
                 <div class="col"><label>Type</label><select class="t-type" onchange="updateFinitions(this)">
                     <option value="taille" ${data?.type=='taille'?'selected':''}>Taille</option>
                     <option value="tonte" ${data?.type=='tonte'?'selected':''}>Tonte</option>
-                    <option value="nettoyage" ${data?.type=='nettoyage'?'selected':''}>Nettoiement</option>
+                    <option value="nettoyage" ${data?.type=='nettoyage'?'selected':''}>Nettoyage</option>
                     <option value="elagage" ${data?.type=='elagage'?'selected':''}>Élagage</option>
                     <option value="debrou" ${data?.type=='debrou'?'selected':''}>Débroussaillage</option>
                     <option value="creation" ${data?.type=='creation'?'selected':''}>Création</option>
@@ -245,7 +256,8 @@
                 <div class="col"><label>Unité</label><select class="t-unit">
                     <option ${data?.unit=='m²'?'selected':''}>m²</option><option ${data?.unit=='ml'?'selected':''}>ml</option>
                     <option ${data?.unit=='m³'?'selected':''}>m³</option><option ${data?.unit=='U'?'selected':''}>U</option>
-                    <option ${data?.unit=='h'?'selected':''}>h</option>
+                    <option ${data?.unit=='h'?'selected':''}>h</option><option ${data?.unit=='diam'?'selected':''}>diam</option>
+                    <option ${data?.unit=='haut'?'selected':''}>haut</option>
                 </select></div>
             </div>
             <button class="btn-del-task" onclick="this.parentElement.remove()">Supprimer</button>
@@ -257,18 +269,18 @@
     function updateFinitions(sel) {
         const fin = sel.parentElement.nextElementSibling.querySelector('.t-fin');
         const opts = {
-            taille: ["Architecturée", "Douce / Sanitaire", "Rabattage", "Fruitière"],
-            tonte: ["Ramassage", "Mulching", "Gazon prestige"],
-            nettoyage: ["Éclaircie", "Nettoiement grille", "Désherbage", "Défrichage"],
-            elagage: ["Taille formation", "Éclaircie", "Démontage", "Rognage"],
-            debrou: ["Fauchage", "Broyage forestier", "Mise à blanc"],
+            taille: ["Architecturée", "Douce", "Rabattage", "Fruitière"],
+            tonte: ["Ramassage", "Mulching", "Prestige"],
+            nettoyage: ["Éclaircie", "Grille", "Désherbage", "Défrichage"],
+            elagage: ["Formation", "Éclaircie", "Démontage", "Rognage"],
+            debrou: ["Fauchage", "Broyage", "Mise à blanc"],
             creation: ["Plantation", "Engazonnement", "Maçonnerie"]
         };
         fin.innerHTML = "";
         (opts[sel.value] || ["Standard"]).forEach(o => { let opt = document.createElement('option'); opt.text = o; fin.add(opt); });
     }
 
-    // PLAN ET ROTATION
+    // --- 2. PLAN ---
     const canvas = document.getElementById('canvas-area');
     let zIdx = 100;
 
@@ -278,41 +290,28 @@
         const isText = (cls === 'style-text');
         
         if(isText) {
-            el.contentEditable = "true";
-            el.innerText = content;
+            el.contentEditable = "true"; el.innerText = content;
         } else {
-            const emojiSpan = document.createElement('span');
-            emojiSpan.className = 'obj-emoji';
-            emojiSpan.innerHTML = content;
-            el.appendChild(emojiSpan);
-            const labelDiv = document.createElement('div');
-            labelDiv.className = 'obj-label';
-            labelDiv.innerText = labelText;
-            el.appendChild(labelDiv);
+            const span = document.createElement('span'); span.className = 'obj-emoji'; span.innerHTML = content; el.appendChild(span);
+            const lbl = document.createElement('div'); lbl.className = 'obj-label'; lbl.innerText = labelText; el.appendChild(lbl);
         }
 
-        // Cas spécial Clôture : long et fin par défaut
-        let defaultW = (cls === 'style-cloture') ? "150px" : (isText ? "120px" : "80px");
-        let defaultH = (cls === 'style-cloture') ? "15px" : (isText ? "60px" : "80px");
+        let defW = (cls === 'style-cloture') ? "150px" : (isText ? "120px" : "80px");
+        let defH = (cls === 'style-cloture') ? "15px" : (isText ? "60px" : "80px");
 
-        el.style.width = savedData?.w || defaultW;
-        el.style.height = savedData?.h || defaultH;
+        el.style.width = savedData?.w || defW;
+        el.style.height = savedData?.h || defH;
         el.style.top = savedData?.t || "100px";
         el.style.left = savedData?.l || "100px";
-        
-        if(savedData?.rot) el.style.transform = savedData.rot; // Applique la rotation
+        if(savedData?.rot) el.style.transform = savedData.rot;
 
         if(!isText && !cls.includes('cloture')) {
-            const emoji = el.querySelector('.obj-emoji');
-            emoji.style.fontSize = savedData?.fs || "45px";
+            el.querySelector('.obj-emoji').style.fontSize = savedData?.fs || "45px";
         }
 
-        // Boutons de contrôle
         const del = document.createElement('div'); del.className = "obj-del"; del.innerHTML = "X";
         del.onclick = (e) => { e.stopPropagation(); el.remove(); }; el.appendChild(del);
-
         const res = document.createElement('div'); res.className = "resizer"; el.appendChild(res);
-
         const rot = document.createElement('div'); rot.className = "rotator"; rot.innerHTML = "⟳"; el.appendChild(rot);
 
         setupDraggable(el);
@@ -341,38 +340,48 @@
         res.addEventListener('touchstart', (e) => { isR = true; e.preventDefault(); e.stopPropagation(); }, {passive:false});
         document.addEventListener('touchmove', (e) => {
             if(!isR) return; const t = e.touches[0];
-            const rect = canvas.getBoundingClientRect();
-            // Calcul simple sans rotation
-            const nw = t.clientX - rect.left - parseFloat(el.style.left);
-            const nh = t.clientY - rect.top - parseFloat(el.style.top);
-            
+            const r = canvas.getBoundingClientRect();
+            const nw = t.clientX - r.left - parseFloat(el.style.left);
+            const nh = t.clientY - r.top - parseFloat(el.style.top);
             if(nw > 20) el.style.width = nw + 'px';
             if(nh > 10) el.style.height = nh + 'px';
-            
-            if(!isText && !cls.includes('cloture')) {
-                el.querySelector('.obj-emoji').style.fontSize = (Math.min(nw, nh) * 0.6) + 'px';
-            }
+            if(!isText && !cls.includes('cloture')) el.querySelector('.obj-emoji').style.fontSize = (Math.min(nw, nh) * 0.6) + 'px';
         }, {passive:false});
         document.addEventListener('touchend', () => isR = false);
     }
 
     function setupRotator(el, rot) {
-        let isRot = false;
-        rot.addEventListener('touchstart', (e) => { isRot = true; e.preventDefault(); e.stopPropagation(); }, {passive:false});
+        let isRo = false;
+        rot.addEventListener('touchstart', (e) => { isRo = true; e.preventDefault(); e.stopPropagation(); }, {passive:false});
         document.addEventListener('touchmove', (e) => {
-            if(!isRot) return;
-            const t = e.touches[0];
-            const rect = el.getBoundingClientRect();
-            const cx = rect.left + rect.width / 2;
-            const cy = rect.top + rect.height / 2;
-            const angle = Math.atan2(t.clientY - cy, t.clientX - cx) * 180 / Math.PI;
-            el.style.transform = `rotate(${angle + 90}deg)`;
+            if(!isRo) return; const t = e.touches[0];
+            const r = el.getBoundingClientRect();
+            const cx = r.left + r.width/2; const cy = r.top + r.height/2;
+            const deg = Math.atan2(t.clientY - cy, t.clientX - cx) * 180 / Math.PI;
+            el.style.transform = `rotate(${deg + 90}deg)`;
         }, {passive:false});
-        document.addEventListener('touchend', () => isRot = false);
+        document.addEventListener('touchend', () => isRo = false);
     }
 
     function clearMap() { if(confirm("Effacer tout ?")) canvas.innerHTML = ''; }
 
+    // --- 3. PHOTOS ---
+    function handlePhotos(input) {
+        if(input.files) {
+            Array.from(input.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const div = document.createElement('div');
+                    div.className = 'photo-item';
+                    div.innerHTML = `<img src="${e.target.result}"><button class="btn-del-photo" onclick="this.parentElement.remove()">X</button>`;
+                    document.getElementById('photo-container').appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    }
+
+    // --- 4. SAUVEGARDE ---
     function saveData() {
         const record = {
             id: Date.now(),
@@ -385,50 +394,60 @@
             })),
             plan: Array.from(document.querySelectorAll('.map-obj')).map(it => ({
                 cls: it.classList[1],
-                content: it.classList.contains('style-text') ? it.innerText.replace('X','') : it.querySelector('.obj-emoji')?.innerHTML || "",
+                content: it.classList.contains('style-text') ? it.innerText : it.querySelector('.obj-emoji')?.innerHTML || "",
                 label: it.querySelector('.obj-label')?.innerText || "",
-                w: it.style.width, h: it.style.height, t: it.style.top, l: it.style.left,
-                rot: it.style.transform,
+                w: it.style.width, h: it.style.height, t: it.style.top, l: it.style.left, rot: it.style.transform,
                 fs: it.querySelector('.obj-emoji')?.style.fontSize || ""
-            }))
+            })),
+            // Sauvegarde basique des photos (Attention limite stockage)
+            photos: Array.from(document.querySelectorAll('.photo-item img')).map(img => img.src)
         };
-        document.querySelectorAll('input, select, textarea').forEach(i => { if(i.id) record.fields[i.id] = i.value; });
-        const db = JSON.parse(localStorage.getItem('mapou_v13') || "[]");
-        db.push(record);
-        localStorage.setItem('mapou_v13', JSON.stringify(db));
-        alert("Données sécurisées sur iPad !");
+        document.querySelectorAll('input, select, textarea').forEach(i => { if(i.id && i.type!=='file') record.fields[i.id] = i.value; });
+        
+        try {
+            const db = JSON.parse(localStorage.getItem('mapou_v14') || "[]");
+            db.push(record);
+            localStorage.setItem('mapou_v14', JSON.stringify(db));
+            alert("Enregistré !");
+        } catch(e) {
+            alert("Erreur: Trop de photos pour la sauvegarde interne. Le rapport PDF fonctionnera mais réduisez les photos pour le backup.");
+        }
     }
 
     function displayArchives() {
         const list = document.getElementById('archive-list'); list.innerHTML = "";
-        const db = JSON.parse(localStorage.getItem('mapou_v13') || "[]");
+        const db = JSON.parse(localStorage.getItem('mapou_v14') || "[]");
         db.reverse().forEach(c => {
             const div = document.createElement('div');
-            div.style = "display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid #eee; background:white; margin-bottom:5px; border-radius:4px;";
-            div.innerHTML = `<span><strong>${c.nom}</strong> (${c.date})</span> 
-                             <button onclick="loadChantier(${c.id})" style="background:var(--gold); border:none; padding:8px 15px; border-radius:4px; font-weight:bold; cursor:pointer;">Ouvrir</button>`;
+            div.style = "padding:12px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; background:white;";
+            div.innerHTML = `<span><strong>${c.nom}</strong> (${c.date})</span> <button onclick="loadChantier(${c.id})" style="background:var(--gold); border:none; padding:5px 10px; border-radius:4px;">Ouvrir</button>`;
             list.appendChild(div);
         });
     }
 
     function loadChantier(id) {
-        const db = JSON.parse(localStorage.getItem('mapou_v13') || "[]");
+        const db = JSON.parse(localStorage.getItem('mapou_v14') || "[]");
         const c = db.find(x => x.id === id); if(!c) return;
         for(let k in c.fields) if(document.getElementById(k)) document.getElementById(k).value = c.fields[k];
         document.getElementById('tasks-list').innerHTML = "";
         c.tasks.forEach(t => addTask(t));
         canvas.innerHTML = '';
         c.plan.forEach(p => addMapObj(p.cls, p.content, p.label, p));
+        // Photos
+        const pc = document.getElementById('photo-container'); pc.innerHTML = "";
+        if(c.photos) c.photos.forEach(src => {
+            const div = document.createElement('div'); div.className = 'photo-item';
+            div.innerHTML = `<img src="${src}"><button class="btn-del-photo" onclick="this.parentElement.remove()">X</button>`;
+            pc.appendChild(div);
+        });
         switchTab('tab-client', document.querySelector('.tab-btn'));
     }
 
     function exportBackup() {
-        const data = localStorage.getItem('mapou_v13') || "[]";
+        const data = localStorage.getItem('mapou_v14') || "[]";
         const blob = new Blob([data], {type: "application/json"});
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = `backup_mapou_${new Date().toISOString().slice(0,10)}.json`;
-        a.click();
+        const a = document.createElement('a'); a.href = url; a.download = `backup_mapou_${new Date().toISOString().slice(0,10)}.json`; a.click();
     }
 
     function importBackup(input) {
@@ -436,7 +455,7 @@
         const reader = new FileReader();
         reader.onload = (e) => {
             if(confirm("Écraser les données ?")) {
-                localStorage.setItem('mapou_v13', e.target.result);
+                localStorage.setItem('mapou_v14', e.target.result);
                 displayArchives(); alert("Restauré !");
             }
         };
