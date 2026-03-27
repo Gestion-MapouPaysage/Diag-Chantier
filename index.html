@@ -12,8 +12,34 @@
     <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.2/dist/leaflet-geoman.css" />
     <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.2/dist/leaflet-geoman.min.js"></script>
     
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.polylinemeasure@2.9.1/Leaflet.PolylineMeasure.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/leaflet.polylinemeasure@2.9.1/Leaflet.PolylineMeasure.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.polylinemeasure/Leaflet.PolylineMeasure.css" />
+    <script src="https://unpkg.com/leaflet.polylinemeasure/Leaflet.PolylineMeasure.js"></script>
+
+    <style>
+        .leaflet-control-zoom { margin-bottom: 5px !important; }
+        
+        /* Force l'affichage des émojis au lieu des images cassées */
+        a.polyline-measure-control-on, a.polyline-measure-control-off {
+            background-image: none !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            background-color: white;
+        }
+        a.polyline-measure-control-off::after { content: '📏'; font-size: 16px; }
+        a.polyline-measure-control-on::after { content: '📏'; font-size: 16px; background-color: #bbf7d0; border-radius: 4px; padding: 2px; }
+        
+        a.polyline-measure-clearControl {
+            background-image: none !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            background-color: white;
+        }
+        a.polyline-measure-clearControl::after { content: '🗑️'; font-size: 16px; }
+    </style>
 </head>
 <body class="bg-gray-100 text-gray-800 antialiased p-4 md:p-8">
 
@@ -106,7 +132,7 @@
 
             <section>
                 <h2 class="text-xl font-semibold text-gray-700 mb-4 bg-gray-100 p-2 rounded">3. Plan du Chantier</h2>
-                <p class="text-sm text-gray-600 mb-2">Zoomez au maximum sur le terrain. Utilisez les outils sur la gauche pour dessiner (Polygone, Carré, Cercle) ou la <strong>règle</strong> pour mesurer.</p>
+                <p class="text-sm text-gray-600 mb-2">Zoomez au maximum sur le terrain. Utilisez les outils sur la gauche pour dessiner (Polygone, Carré, Cercle) ou la <strong>règle 📏</strong> pour mesurer.</p>
                 
                 <div class="flex flex-col sm:flex-row gap-3 mb-3 justify-between items-start sm:items-center">
                     <div class="flex gap-3 bg-gray-50 p-2 rounded border inline-flex">
@@ -221,7 +247,7 @@
             position: 'topleft',
             drawMarker: false,       
             drawCircleMarker: false, 
-            drawPolyline: false, // La ligne Geoman est désactivée car on a un vrai outil de mesure     
+            drawPolyline: false,   
             drawRectangle: true,     
             drawPolygon: true,       
             drawCircle: true,        
@@ -258,15 +284,15 @@
             btnElement.classList.add('border-gray-800');
         }
 
-        // --- NOUVEAU : OUTIL DE MESURE (RÈGLE) ---
+        // --- OUTIL DE MESURE (RÈGLE) ---
+        // Le bouton s'affichera en haut à gauche, sous les outils de dessin.
         L.control.polylineMeasure({
             position: 'topleft',
             unit: 'metres',
             showBearings: false,
-            clearMeasurementsOnStop: false, // Ne pas effacer la ligne quand on arrête de mesurer
-            showClearControl: true,         // Afficher l'icône corbeille pour effacer la ligne
+            clearMeasurementsOnStop: false, 
+            showClearControl: true,         
             showUnitControl: false,
-            // Traductions en français
             measureControlTitleOn: 'Activer la règle de mesure',
             measureControlTitleOff: 'Désactiver la règle',
             clearControlTitle: 'Effacer toutes les mesures',
@@ -287,7 +313,7 @@
                         map.flyTo([lat, lng], 21);
                     }, 
                     function(error) {
-                        alert("Impossible de vous localiser. Vérifiez que le GPS est activé sur votre appareil et que vous avez autorisé le navigateur à accéder à votre position.");
+                        alert("Impossible de vous localiser. Vérifiez que le GPS est activé sur votre appareil.");
                     },
                     { enableHighAccuracy: true }
                 );
