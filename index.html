@@ -11,40 +11,20 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.2/dist/leaflet-geoman.css" />
     <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.2/dist/leaflet-geoman.min.js"></script>
-    
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.polylinemeasure/Leaflet.PolylineMeasure.css" />
-    <script src="https://unpkg.com/leaflet.polylinemeasure/Leaflet.PolylineMeasure.js"></script>
-
-    <style>
-        .leaflet-control-zoom { margin-bottom: 5px !important; }
-        
-        /* Force l'affichage des émojis au lieu des images cassées */
-        a.polyline-measure-control-on, a.polyline-measure-control-off {
-            background-image: none !important;
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            background-color: white;
-        }
-        a.polyline-measure-control-off::after { content: '📏'; font-size: 16px; }
-        a.polyline-measure-control-on::after { content: '📏'; font-size: 16px; background-color: #bbf7d0; border-radius: 4px; padding: 2px; }
-        
-        a.polyline-measure-clearControl {
-            background-image: none !important;
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            background-color: white;
-        }
-        a.polyline-measure-clearControl::after { content: '🗑️'; font-size: 16px; }
-    </style>
 </head>
 <body class="bg-gray-100 text-gray-800 antialiased p-4 md:p-8">
 
     <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
-        <h1 class="text-3xl font-bold text-green-700 border-b-2 border-green-500 pb-2 mb-6">Fiche de Chantier</h1>
+        
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-2 border-green-500 pb-4 mb-6 gap-4">
+            <h1 class="text-3xl font-bold text-green-700">Fiche de Chantier</h1>
+            <div>
+                <input type="file" id="importFichier" accept=".json" class="hidden" onchange="importerDonnees(event)">
+                <button type="button" onclick="document.getElementById('importFichier').click()" class="px-4 py-2 bg-blue-100 text-blue-800 font-bold rounded shadow hover:bg-blue-200 border border-blue-300 transition">
+                    📂 Ouvrir une fiche existante
+                </button>
+            </div>
+        </div>
 
         <form id="chantierForm" class="space-y-8">
 
@@ -132,7 +112,7 @@
 
             <section>
                 <h2 class="text-xl font-semibold text-gray-700 mb-4 bg-gray-100 p-2 rounded">3. Plan du Chantier</h2>
-                <p class="text-sm text-gray-600 mb-2">Zoomez au maximum sur le terrain. Utilisez les outils sur la gauche pour dessiner (Polygone, Carré, Cercle) ou la <strong>règle 📏</strong> pour mesurer.</p>
+                <p class="text-sm text-gray-600 mb-2">Utilisez les outils à gauche pour dessiner. <strong>L'outil Ligne 〰️ sert de règle</strong> (les mesures s'afficheront en dessinant).</p>
                 
                 <div class="flex flex-col sm:flex-row gap-3 mb-3 justify-between items-start sm:items-center">
                     <div class="flex gap-3 bg-gray-50 p-2 rounded border inline-flex">
@@ -231,8 +211,7 @@
     </div>
 
     <script>
-        // --- INITIALISATION DE LA CARTE (Google Satellite) ---
-        
+        // --- 1. INITIALISATION DE LA CARTE ---
         const map = L.map('map').setView([15.9963, -61.7196], 18);
 
         L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
@@ -241,13 +220,13 @@
             maxZoom: 24
         }).addTo(map);
 
-        // --- OUTILS DE DESSIN (Geoman) ---
+        // --- 2. OUTILS DE DESSIN ET RÈGLE ---
         map.pm.setLang('fr');
         map.pm.addControls({
             position: 'topleft',
             drawMarker: false,       
             drawCircleMarker: false, 
-            drawPolyline: false,   
+            drawPolyline: true,      // C'EST L'OUTIL RÈGLE / LIGNE
             drawRectangle: true,     
             drawPolygon: true,       
             drawCircle: true,        
@@ -256,6 +235,11 @@
             dragMode: true,          
             cutPolygon: false,       
             removalMode: true        
+        });
+
+        // Activer l'affichage des distances sur les outils
+        map.pm.setGlobalOptions({
+            measurements: { measurement: true, displayFormat: 'metric' }
         });
 
         let currentDrawColor = '#22c55e';
@@ -268,13 +252,7 @@
 
         function changerCouleur(couleur, btnElement) {
             currentDrawColor = couleur;
-            
-            map.pm.setPathOptions({
-                color: currentDrawColor,
-                fillColor: currentDrawColor,
-                fillOpacity: 0.4,
-                weight: 3
-            });
+            map.pm.setPathOptions({ color: currentDrawColor, fillColor: currentDrawColor, fillOpacity: 0.4, weight: 3 });
 
             document.querySelectorAll('.color-btn').forEach(btn => {
                 btn.classList.remove('border-gray-800');
@@ -284,26 +262,7 @@
             btnElement.classList.add('border-gray-800');
         }
 
-        // --- OUTIL DE MESURE (RÈGLE) ---
-        // Le bouton s'affichera en haut à gauche, sous les outils de dessin.
-        L.control.polylineMeasure({
-            position: 'topleft',
-            unit: 'metres',
-            showBearings: false,
-            clearMeasurementsOnStop: false, 
-            showClearControl: true,         
-            showUnitControl: false,
-            measureControlTitleOn: 'Activer la règle de mesure',
-            measureControlTitleOff: 'Désactiver la règle',
-            clearControlTitle: 'Effacer toutes les mesures',
-            tooltipTextFinish: 'Cliquez pour terminer la ligne',
-            tooltipTextAdd: 'Cliquez pour ajouter un point',
-            tooltipTextDelete: 'Appuyez sur Maj et Cliquez pour supprimer',
-            tooltipTextMove: 'Glissez pour déplacer le point'
-        }).addTo(map);
-
-
-        // --- FONCTION DE GÉOLOCALISATION ---
+        // --- 3. FONCTION DE GÉOLOCALISATION ---
         function centrerSurMoi() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -322,7 +281,7 @@
             }
         }
 
-        // --- BASE DE DONNÉES DES TRAVAUX ---
+        // --- 4. BASE DE DONNÉES DES TRAVAUX ---
         const donneesTravaux = {
             'Taille': {
                 titre: 'Taille',
@@ -346,7 +305,7 @@
             }
         };
 
-        // --- GESTION DYNAMIQUE DES TRAVAUX ---
+        // --- 5. GESTION DYNAMIQUE DES TRAVAUX ---
         function ajouterBlocTravail() {
             const select = document.getElementById('selectCategorieTravaux');
             const categorieKey = select.value;
@@ -381,17 +340,11 @@
             });
             htmlQuantite += `</select></div>`;
 
-            divBloc.innerHTML = `
-                ${btnSupprimer}
-                <h3 class="font-bold text-lg text-green-800 border-b pb-1 inline-block pr-4">${config.titre}</h3>
-                ${htmlOptions}
-                ${htmlQuantite}
-            `;
-
+            divBloc.innerHTML = `${btnSupprimer} <h3 class="font-bold text-lg text-green-800 border-b pb-1 inline-block pr-4">${config.titre}</h3> ${htmlOptions} ${htmlQuantite}`;
             conteneur.appendChild(divBloc);
         }
 
-        // --- EXPORTATION (Infos + Travaux + Plan) ---
+        // --- 6. EXPORTATION (SAUVEGARDE) ---
         function exporterDonnees() {
             const form = document.getElementById('chantierForm');
             if(!form.reportValidity()) return; 
@@ -401,54 +354,39 @@
 
             for (let [key, value] of formData.entries()) {
                 if (data.infos_generales[key]) {
-                    if (!Array.isArray(data.infos_generales[key])) {
-                        data.infos_generales[key] = [data.infos_generales[key]];
-                    }
+                    if (!Array.isArray(data.infos_generales[key])) data.infos_generales[key] = [data.infos_generales[key]];
                     data.infos_generales[key].push(value);
                 } else {
                     data.infos_generales[key] = value;
                 }
             }
 
-            const blocsTravaux = document.querySelectorAll('.bloc-travail');
-            blocsTravaux.forEach(bloc => {
+            document.querySelectorAll('.bloc-travail').forEach(bloc => {
                 const categorie = bloc.dataset.categorie;
                 const optionsCochees = Array.from(bloc.querySelectorAll('.travail-option:checked')).map(cb => cb.value);
                 const quantite = bloc.querySelector('.travail-qte').value;
                 const unite = bloc.querySelector('.travail-unite').value;
-
                 if (optionsCochees.length > 0 || quantite !== "") {
                     data.travaux.push({ categorie: categorie, options_selectionnees: optionsCochees, quantite: quantite, unite: unite });
                 }
             });
 
-            // On exporte uniquement les polygones dessinés par l'utilisateur (on ignore les traits de la règle)
-            const mapLayers = map.pm.getGeomanDrawLayers();
             const geojsonFeatures = [];
-            
-            mapLayers.forEach(layer => {
+            map.pm.getGeomanDrawLayers().forEach(layer => {
                 const geojson = layer.toGeoJSON();
                 geojson.properties.color = layer.options.color || '#22c55e';
-                
                 if(layer instanceof L.Circle) {
                     geojson.properties.radius = layer.getRadius();
                     geojson.properties.type = "Circle";
                 }
-                
                 geojsonFeatures.push(geojson);
             });
 
-            if (geojsonFeatures.length > 0) {
-                data.plan_geographique = {
-                    type: "FeatureCollection",
-                    features: geojsonFeatures
-                };
-            }
+            if (geojsonFeatures.length > 0) data.plan_geographique = { type: "FeatureCollection", features: geojsonFeatures };
 
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
             const downloadAnchorNode = document.createElement('a');
             downloadAnchorNode.setAttribute("href", dataStr);
-            
             const nomFichier = data.infos_generales.client_nom ? data.infos_generales.client_nom.replace(/\s+/g, '_') : 'client_inconnu';
             const dateFichier = new Date().toISOString().split('T')[0];
             downloadAnchorNode.setAttribute("download", `Chantier_${nomFichier}_${dateFichier}.json`);
@@ -457,7 +395,76 @@
             downloadAnchorNode.click();
             downloadAnchorNode.remove();
 
-            alert("Les données et le plan du chantier ont été exportés avec succès !");
+            alert("Les données ont été exportées. Sur iPad, vous les trouverez dans l'application 'Fichiers' (Dossier Téléchargements).");
+        }
+
+        // --- 7. IMPORTATION (CHARGEMENT D'UNE FICHE EXISTANTE) ---
+        function importerDonnees(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+
+                    // A. Remplir les infos générales
+                    for (let key in data.infos_generales) {
+                        const elements = document.getElementsByName(key);
+                        if (elements.length > 0) {
+                            if (elements[0].type === 'checkbox' || elements[0].type === 'radio') {
+                                const values = Array.isArray(data.infos_generales[key]) ? data.infos_generales[key] : [data.infos_generales[key]];
+                                elements.forEach(el => el.checked = values.includes(el.value));
+                            } else {
+                                elements[0].value = data.infos_generales[key];
+                            }
+                        }
+                    }
+
+                    // B. Remplir les travaux
+                    document.getElementById('conteneurTravaux').innerHTML = ''; // Nettoyer
+                    if (data.travaux) {
+                        data.travaux.forEach(t => {
+                            let catKey = Object.keys(donneesTravaux).find(k => donneesTravaux[k].titre === t.categorie);
+                            if(catKey) {
+                                document.getElementById('selectCategorieTravaux').value = catKey;
+                                ajouterBlocTravail();
+                                const blocs = document.querySelectorAll('.bloc-travail');
+                                const lastBloc = blocs[blocs.length - 1];
+                                t.options_selectionnees.forEach(opt => {
+                                    const cb = Array.from(lastBloc.querySelectorAll('.travail-option')).find(c => c.value === opt);
+                                    if(cb) cb.checked = true;
+                                });
+                                lastBloc.querySelector('.travail-qte').value = t.quantite || '';
+                                lastBloc.querySelector('.travail-unite').value = t.unite || '';
+                            }
+                        });
+                    }
+
+                    // C. Restaurer la carte
+                    map.pm.getGeomanDrawLayers().forEach(layer => map.removeLayer(layer)); // Vider les anciens dessins
+                    if (data.plan_geographique) {
+                        L.geoJSON(data.plan_geographique, {
+                            style: function(feature) {
+                                return { color: feature.properties.color || '#22c55e', fillColor: feature.properties.color || '#22c55e', fillOpacity: 0.4, weight: 3 };
+                            },
+                            pointToLayer: function(feature, latlng) {
+                                if (feature.properties.type === "Circle" && feature.properties.radius) return L.circle(latlng, {radius: feature.properties.radius});
+                                return L.marker(latlng);
+                            },
+                            onEachFeature: function(feature, layer) {
+                                layer.options.color = feature.properties.color;
+                                layer.options.fillColor = feature.properties.color;
+                            }
+                        }).addTo(map);
+                    }
+
+                    alert("Fiche rechargée avec succès !");
+                } catch (error) {
+                    alert("Erreur lors de la lecture du fichier : " + error.message);
+                }
+            };
+            reader.readAsText(file);
         }
     </script>
 </body>
