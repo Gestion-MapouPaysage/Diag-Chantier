@@ -187,16 +187,16 @@
     </div>
 
     <script>
-        // --- INITIALISATION DE LA CARTE (Leaflet + Geoman + Satellite Esri) ---
+        // --- INITIALISATION DE LA CARTE (Google Satellite + Geoman) ---
         
-        // Coordonnées centrées sur la Guadeloupe par défaut avec un zoom assez proche (16)
-        const map = L.map('map').setView([15.9963, -61.7196], 16);
+        // Coordonnées centrées sur la Guadeloupe par défaut avec un zoom proche (18)
+        const map = L.map('map').setView([15.9963, -61.7196], 18);
 
-        // Ajout de la vue Satellite (Esri World Imagery) - Permet le "sur-zoom"
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: '© Esri',
-            maxNativeZoom: 19, // Résolution max de l'image satellite
-            maxZoom: 22        // Zoom artificiel autorisé très proche pour le dessin
+        // Ajout de la vue Google Satellite Haute Définition (Sans clé API)
+        L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            attribution: '© Google',
+            maxNativeZoom: 19, // C'est le niveau max réel des photos Google
+            maxZoom: 24        // Autorise un zoom artificiel extrêmement puissant pour dessiner
         }).addTo(map);
 
         // Configuration de la langue de l'outil de dessin
@@ -247,7 +247,6 @@
             btnElement.classList.remove('border-transparent');
             btnElement.classList.add('border-gray-800');
         }
-
 
         // --- BASE DE DONNÉES DES TRAVAUX ---
         const donneesTravaux = {
