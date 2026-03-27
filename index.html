@@ -11,6 +11,9 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.2/dist/leaflet-geoman.css" />
     <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.2/dist/leaflet-geoman.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.polylinemeasure@2.9.1/Leaflet.PolylineMeasure.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.polylinemeasure@2.9.1/Leaflet.PolylineMeasure.min.js"></script>
 </head>
 <body class="bg-gray-100 text-gray-800 antialiased p-4 md:p-8">
 
@@ -103,12 +106,18 @@
 
             <section>
                 <h2 class="text-xl font-semibold text-gray-700 mb-4 bg-gray-100 p-2 rounded">3. Plan du Chantier</h2>
-                <p class="text-sm text-gray-600 mb-2">Zoomez au maximum sur le terrain. Utilisez les outils sur la gauche pour dessiner les zones d'intervention (Polygone libre, Carré, Cercle). Cliquez sur une couleur avant de dessiner.</p>
+                <p class="text-sm text-gray-600 mb-2">Zoomez au maximum sur le terrain. Utilisez les outils sur la gauche pour dessiner (Polygone, Carré, Cercle) ou la <strong>règle</strong> pour mesurer.</p>
                 
                 <div class="flex flex-col sm:flex-row gap-3 mb-3 justify-between items-start sm:items-center">
                     <div class="flex gap-3 bg-gray-50 p-2 rounded border inline-flex">
                         <span class="text-sm font-medium text-gray-700 my-auto mr-2">Couleur :</span>
-                        <button type="button" onclick="changerCouleur('#22c55e', this)" class="color-btn w-8 h-8 rounded-full bg-green-500 border-4 border-gray-800 shadow"></button> <button type="button" onclick="changerCouleur('#8b4513', this)" class="color-btn w-8 h-8 rounded-full bg-[saddlebrown] border-4 border-transparent hover:border-gray-400 shadow"></button> <button type="button" onclick="changerCouleur('#3b82f6', this)" class="color-btn w-8 h-8 rounded-full bg-blue-500 border-4 border-transparent hover:border-gray-400 shadow"></button> <button type="button" onclick="changerCouleur('#ef4444', this)" class="color-btn w-8 h-8 rounded-full bg-red-500 border-4 border-transparent hover:border-gray-400 shadow"></button> <button type="button" onclick="changerCouleur('#000000', this)" class="color-btn w-8 h-8 rounded-full bg-black border-4 border-transparent hover:border-gray-400 shadow"></button> <button type="button" onclick="changerCouleur('#6b7280', this)" class="color-btn w-8 h-8 rounded-full bg-gray-500 border-4 border-transparent hover:border-gray-400 shadow"></button> </div>
+                        <button type="button" onclick="changerCouleur('#22c55e', this)" class="color-btn w-8 h-8 rounded-full bg-green-500 border-4 border-gray-800 shadow"></button>
+                        <button type="button" onclick="changerCouleur('#8b4513', this)" class="color-btn w-8 h-8 rounded-full bg-[saddlebrown] border-4 border-transparent hover:border-gray-400 shadow"></button>
+                        <button type="button" onclick="changerCouleur('#3b82f6', this)" class="color-btn w-8 h-8 rounded-full bg-blue-500 border-4 border-transparent hover:border-gray-400 shadow"></button>
+                        <button type="button" onclick="changerCouleur('#ef4444', this)" class="color-btn w-8 h-8 rounded-full bg-red-500 border-4 border-transparent hover:border-gray-400 shadow"></button>
+                        <button type="button" onclick="changerCouleur('#000000', this)" class="color-btn w-8 h-8 rounded-full bg-black border-4 border-transparent hover:border-gray-400 shadow"></button>
+                        <button type="button" onclick="changerCouleur('#6b7280', this)" class="color-btn w-8 h-8 rounded-full bg-gray-500 border-4 border-transparent hover:border-gray-400 shadow"></button>
+                    </div>
 
                     <button type="button" onclick="centrerSurMoi()" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-bold rounded shadow hover:bg-blue-700 transition">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -196,25 +205,23 @@
     </div>
 
     <script>
-        // --- INITIALISATION DE LA CARTE (Google Satellite + Geoman) ---
+        // --- INITIALISATION DE LA CARTE (Google Satellite) ---
         
-        // Coordonnées centrées sur la Guadeloupe par défaut
         const map = L.map('map').setView([15.9963, -61.7196], 18);
 
-        // Ajout de la vue Google Satellite Haute Définition
         L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
             attribution: '© Google',
             maxNativeZoom: 19,
             maxZoom: 24
         }).addTo(map);
 
+        // --- OUTILS DE DESSIN (Geoman) ---
         map.pm.setLang('fr');
-
         map.pm.addControls({
             position: 'topleft',
             drawMarker: false,       
             drawCircleMarker: false, 
-            drawPolyline: false,     
+            drawPolyline: false, // La ligne Geoman est désactivée car on a un vrai outil de mesure     
             drawRectangle: true,     
             drawPolygon: true,       
             drawCircle: true,        
@@ -225,7 +232,7 @@
             removalMode: true        
         });
 
-        let currentDrawColor = '#22c55e'; // Vert par défaut
+        let currentDrawColor = '#22c55e';
         map.pm.setPathOptions({
             color: currentDrawColor,
             fillColor: currentDrawColor,
@@ -251,23 +258,38 @@
             btnElement.classList.add('border-gray-800');
         }
 
-        // --- NOUVEAU : FONCTION DE GÉOLOCALISATION ---
+        // --- NOUVEAU : OUTIL DE MESURE (RÈGLE) ---
+        L.control.polylineMeasure({
+            position: 'topleft',
+            unit: 'metres',
+            showBearings: false,
+            clearMeasurementsOnStop: false, // Ne pas effacer la ligne quand on arrête de mesurer
+            showClearControl: true,         // Afficher l'icône corbeille pour effacer la ligne
+            showUnitControl: false,
+            // Traductions en français
+            measureControlTitleOn: 'Activer la règle de mesure',
+            measureControlTitleOff: 'Désactiver la règle',
+            clearControlTitle: 'Effacer toutes les mesures',
+            tooltipTextFinish: 'Cliquez pour terminer la ligne',
+            tooltipTextAdd: 'Cliquez pour ajouter un point',
+            tooltipTextDelete: 'Appuyez sur Maj et Cliquez pour supprimer',
+            tooltipTextMove: 'Glissez pour déplacer le point'
+        }).addTo(map);
+
+
+        // --- FONCTION DE GÉOLOCALISATION ---
         function centrerSurMoi() {
             if (navigator.geolocation) {
-                // Demande la position avec une haute précision (utilise le vrai GPS du téléphone)
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
                         const lat = position.coords.latitude;
                         const lng = position.coords.longitude;
-                        // Déplace la carte avec une animation ("flyTo") et zoome très fort (niveau 21)
                         map.flyTo([lat, lng], 21);
                     }, 
                     function(error) {
                         alert("Impossible de vous localiser. Vérifiez que le GPS est activé sur votre appareil et que vous avez autorisé le navigateur à accéder à votre position.");
                     },
-                    {
-                        enableHighAccuracy: true // Force l'utilisation du GPS plutôt que l'antenne relais
-                    }
+                    { enableHighAccuracy: true }
                 );
             } else {
                 alert("La géolocalisation n'est pas supportée par votre navigateur.");
@@ -351,7 +373,6 @@
             const formData = new FormData(form);
             const data = { infos_generales: {}, travaux: [], plan_geographique: null };
 
-            // 1. Infos générales
             for (let [key, value] of formData.entries()) {
                 if (data.infos_generales[key]) {
                     if (!Array.isArray(data.infos_generales[key])) {
@@ -363,7 +384,6 @@
                 }
             }
 
-            // 2. Travaux dynamiques
             const blocsTravaux = document.querySelectorAll('.bloc-travail');
             blocsTravaux.forEach(bloc => {
                 const categorie = bloc.dataset.categorie;
@@ -376,7 +396,7 @@
                 }
             });
 
-            // 3. Plan Géographique
+            // On exporte uniquement les polygones dessinés par l'utilisateur (on ignore les traits de la règle)
             const mapLayers = map.pm.getGeomanDrawLayers();
             const geojsonFeatures = [];
             
@@ -399,7 +419,6 @@
                 };
             }
 
-            // 4. Téléchargement du JSON final
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
             const downloadAnchorNode = document.createElement('a');
             downloadAnchorNode.setAttribute("href", dataStr);
