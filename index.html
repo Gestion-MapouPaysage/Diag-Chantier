@@ -105,9 +105,18 @@
                 <h2 class="text-xl font-semibold text-gray-700 mb-4 bg-gray-100 p-2 rounded">3. Plan du Chantier</h2>
                 <p class="text-sm text-gray-600 mb-2">Zoomez au maximum sur le terrain. Utilisez les outils sur la gauche pour dessiner les zones d'intervention (Polygone libre, Carré, Cercle). Cliquez sur une couleur avant de dessiner.</p>
                 
-                <div class="flex gap-3 mb-3 bg-gray-50 p-2 rounded border inline-flex">
-                    <span class="text-sm font-medium text-gray-700 my-auto mr-2">Couleur :</span>
-                    <button type="button" onclick="changerCouleur('#22c55e', this)" class="color-btn w-8 h-8 rounded-full bg-green-500 border-4 border-gray-800 shadow"></button> <button type="button" onclick="changerCouleur('#8b4513', this)" class="color-btn w-8 h-8 rounded-full bg-[saddlebrown] border-4 border-transparent hover:border-gray-400 shadow"></button> <button type="button" onclick="changerCouleur('#3b82f6', this)" class="color-btn w-8 h-8 rounded-full bg-blue-500 border-4 border-transparent hover:border-gray-400 shadow"></button> <button type="button" onclick="changerCouleur('#ef4444', this)" class="color-btn w-8 h-8 rounded-full bg-red-500 border-4 border-transparent hover:border-gray-400 shadow"></button> <button type="button" onclick="changerCouleur('#000000', this)" class="color-btn w-8 h-8 rounded-full bg-black border-4 border-transparent hover:border-gray-400 shadow"></button> <button type="button" onclick="changerCouleur('#6b7280', this)" class="color-btn w-8 h-8 rounded-full bg-gray-500 border-4 border-transparent hover:border-gray-400 shadow"></button> </div>
+                <div class="flex flex-col sm:flex-row gap-3 mb-3 justify-between items-start sm:items-center">
+                    <div class="flex gap-3 bg-gray-50 p-2 rounded border inline-flex">
+                        <span class="text-sm font-medium text-gray-700 my-auto mr-2">Couleur :</span>
+                        <button type="button" onclick="changerCouleur('#22c55e', this)" class="color-btn w-8 h-8 rounded-full bg-green-500 border-4 border-gray-800 shadow"></button> <button type="button" onclick="changerCouleur('#8b4513', this)" class="color-btn w-8 h-8 rounded-full bg-[saddlebrown] border-4 border-transparent hover:border-gray-400 shadow"></button> <button type="button" onclick="changerCouleur('#3b82f6', this)" class="color-btn w-8 h-8 rounded-full bg-blue-500 border-4 border-transparent hover:border-gray-400 shadow"></button> <button type="button" onclick="changerCouleur('#ef4444', this)" class="color-btn w-8 h-8 rounded-full bg-red-500 border-4 border-transparent hover:border-gray-400 shadow"></button> <button type="button" onclick="changerCouleur('#000000', this)" class="color-btn w-8 h-8 rounded-full bg-black border-4 border-transparent hover:border-gray-400 shadow"></button> <button type="button" onclick="changerCouleur('#6b7280', this)" class="color-btn w-8 h-8 rounded-full bg-gray-500 border-4 border-transparent hover:border-gray-400 shadow"></button> </div>
+
+                    <button type="button" onclick="centrerSurMoi()" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-bold rounded shadow hover:bg-blue-700 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                        </svg>
+                        Me localiser
+                    </button>
+                </div>
 
                 <div id="map" class="w-full h-[500px] rounded-lg border-2 border-gray-300 z-0 relative"></div>
             </section>
@@ -189,36 +198,33 @@
     <script>
         // --- INITIALISATION DE LA CARTE (Google Satellite + Geoman) ---
         
-        // Coordonnées centrées sur la Guadeloupe par défaut avec un zoom proche (18)
+        // Coordonnées centrées sur la Guadeloupe par défaut
         const map = L.map('map').setView([15.9963, -61.7196], 18);
 
-        // Ajout de la vue Google Satellite Haute Définition (Sans clé API)
+        // Ajout de la vue Google Satellite Haute Définition
         L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
             attribution: '© Google',
-            maxNativeZoom: 19, // C'est le niveau max réel des photos Google
-            maxZoom: 24        // Autorise un zoom artificiel extrêmement puissant pour dessiner
+            maxNativeZoom: 19,
+            maxZoom: 24
         }).addTo(map);
 
-        // Configuration de la langue de l'outil de dessin
         map.pm.setLang('fr');
 
-        // Ajout des outils de dessin (Geoman)
         map.pm.addControls({
             position: 'topleft',
-            drawMarker: false,       // Désactivé
-            drawCircleMarker: false, // Désactivé
-            drawPolyline: false,     // Désactivé (Ligne simple)
-            drawRectangle: true,     // ACTIVÉ (Carré/Rectangle)
-            drawPolygon: true,       // ACTIVÉ (Forme libre ou triangle)
-            drawCircle: true,        // ACTIVÉ (Cercle)
-            drawText: false,         // Désactivé
-            editMode: true,          // ACTIVÉ (Modifier la forme)
-            dragMode: true,          // ACTIVÉ (Déplacer)
-            cutPolygon: false,       // Désactivé
-            removalMode: true        // ACTIVÉ (Supprimer)
+            drawMarker: false,       
+            drawCircleMarker: false, 
+            drawPolyline: false,     
+            drawRectangle: true,     
+            drawPolygon: true,       
+            drawCircle: true,        
+            drawText: false,         
+            editMode: true,          
+            dragMode: true,          
+            cutPolygon: false,       
+            removalMode: true        
         });
 
-        // Gestion de la couleur de dessin par défaut
         let currentDrawColor = '#22c55e'; // Vert par défaut
         map.pm.setPathOptions({
             color: currentDrawColor,
@@ -227,11 +233,9 @@
             weight: 3
         });
 
-        // Fonction pour changer la couleur de dessin
         function changerCouleur(couleur, btnElement) {
             currentDrawColor = couleur;
             
-            // Applique la couleur aux prochains dessins
             map.pm.setPathOptions({
                 color: currentDrawColor,
                 fillColor: currentDrawColor,
@@ -239,13 +243,35 @@
                 weight: 3
             });
 
-            // Met à jour l'affichage des boutons (bordure noire pour le bouton actif)
             document.querySelectorAll('.color-btn').forEach(btn => {
                 btn.classList.remove('border-gray-800');
                 btn.classList.add('border-transparent');
             });
             btnElement.classList.remove('border-transparent');
             btnElement.classList.add('border-gray-800');
+        }
+
+        // --- NOUVEAU : FONCTION DE GÉOLOCALISATION ---
+        function centrerSurMoi() {
+            if (navigator.geolocation) {
+                // Demande la position avec une haute précision (utilise le vrai GPS du téléphone)
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        // Déplace la carte avec une animation ("flyTo") et zoome très fort (niveau 21)
+                        map.flyTo([lat, lng], 21);
+                    }, 
+                    function(error) {
+                        alert("Impossible de vous localiser. Vérifiez que le GPS est activé sur votre appareil et que vous avez autorisé le navigateur à accéder à votre position.");
+                    },
+                    {
+                        enableHighAccuracy: true // Force l'utilisation du GPS plutôt que l'antenne relais
+                    }
+                );
+            } else {
+                alert("La géolocalisation n'est pas supportée par votre navigateur.");
+            }
         }
 
         // --- BASE DE DONNÉES DES TRAVAUX ---
@@ -350,16 +376,14 @@
                 }
             });
 
-            // 3. Plan Géographique (Récupération des dessins de la carte)
+            // 3. Plan Géographique
             const mapLayers = map.pm.getGeomanDrawLayers();
             const geojsonFeatures = [];
             
             mapLayers.forEach(layer => {
                 const geojson = layer.toGeoJSON();
-                // On inclut la couleur choisie dans les propriétés du dessin
                 geojson.properties.color = layer.options.color || '#22c55e';
                 
-                // Hack pour les cercles (le format GeoJSON standard ne gère pas les cercles, on stocke donc le rayon)
                 if(layer instanceof L.Circle) {
                     geojson.properties.radius = layer.getRadius();
                     geojson.properties.type = "Circle";
