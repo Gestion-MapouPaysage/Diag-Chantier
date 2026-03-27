@@ -44,4 +44,353 @@
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium">Adresse postale</label>
-                        <input type="text" name="client
+                        <input type="text" name="client_adresse" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium">Stationnement</label>
+                        <select name="stationnement" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                            <option value="">Sélectionner...</option>
+                            <option value="Facile/Devant">Facile / Devant</option>
+                            <option value="Difficile/rue Etroite">Difficile / Rue Étroite</option>
+                            <option value="éloigné >20m">Éloigné > 20m</option>
+                            <option value="Parking/Garage">Parking / Garage</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Passage</label>
+                        <select name="passage" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                            <option value="">Sélectionner...</option>
+                            <option value="Libre">Libre</option>
+                            <option value="Standard/Portail">Standard / Portail</option>
+                            <option value="Etroit/Porte">Étroit / Porte</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium">Réseaux (Cochez si présents)</label>
+                        <div class="mt-2 space-x-4">
+                            <label class="inline-flex items-center"><input type="checkbox" name="reseaux" value="Câbles/Tuyauterie" class="rounded border-gray-300 text-green-600 shadow-sm"> <span class="ml-2">Câbles / Tuyauterie</span></label>
+                            <label class="inline-flex items-center"><input type="checkbox" name="reseaux" value="Regard" class="rounded border-gray-300 text-green-600 shadow-sm"> <span class="ml-2">Regard / Sortie visible</span></label>
+                            <label class="inline-flex items-center"><input type="checkbox" name="reseaux" value="Arrosage" class="rounded border-gray-300 text-green-600 shadow-sm"> <span class="ml-2">Arrosage</span></label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 bg-gray-100 p-2 rounded">2. Doléances & Contrat</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium">Type de Contrat</label>
+                        <select name="contrat" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                            <option value="">Sélectionner...</option>
+                            <option value="Ponctuel">Ponctuel</option>
+                            <option value="Quinzomadaire/Trihebdomadaire">Quinzomadaire / Trihebdomadaire</option>
+                            <option value="Mensuel">Mensuel</option>
+                            <option value="Bimestriel">Bimestriel</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Préférence planning</label>
+                        <input type="text" name="pref_planning" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium">Notes & Doléances</label>
+                        <textarea name="notes_doleances" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 bg-gray-100 p-2 rounded">3. Plan du Chantier</h2>
+                <p class="text-sm text-gray-600 mb-2">Zoomez au maximum sur le terrain. Utilisez les outils sur la gauche pour dessiner les zones d'intervention (Polygone libre, Carré, Cercle). Cliquez sur une couleur avant de dessiner.</p>
+                
+                <div class="flex gap-3 mb-3 bg-gray-50 p-2 rounded border inline-flex">
+                    <span class="text-sm font-medium text-gray-700 my-auto mr-2">Couleur :</span>
+                    <button type="button" onclick="changerCouleur('#22c55e', this)" class="color-btn w-8 h-8 rounded-full bg-green-500 border-4 border-gray-800 shadow"></button> <button type="button" onclick="changerCouleur('#8b4513', this)" class="color-btn w-8 h-8 rounded-full bg-[saddlebrown] border-4 border-transparent hover:border-gray-400 shadow"></button> <button type="button" onclick="changerCouleur('#3b82f6', this)" class="color-btn w-8 h-8 rounded-full bg-blue-500 border-4 border-transparent hover:border-gray-400 shadow"></button> <button type="button" onclick="changerCouleur('#ef4444', this)" class="color-btn w-8 h-8 rounded-full bg-red-500 border-4 border-transparent hover:border-gray-400 shadow"></button> <button type="button" onclick="changerCouleur('#000000', this)" class="color-btn w-8 h-8 rounded-full bg-black border-4 border-transparent hover:border-gray-400 shadow"></button> <button type="button" onclick="changerCouleur('#6b7280', this)" class="color-btn w-8 h-8 rounded-full bg-gray-500 border-4 border-transparent hover:border-gray-400 shadow"></button> </div>
+
+                <div id="map" class="w-full h-[500px] rounded-lg border-2 border-gray-300 z-0 relative"></div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 bg-gray-100 p-2 rounded">4. Information Station (Terrain)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium">Topographie</label>
+                        <select name="topographie" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                            <option value="">Sélectionner...</option>
+                            <option value="Plat">Plat</option>
+                            <option value="Pente douce">Pente douce</option>
+                            <option value="Talus raide">Talus raide</option>
+                            <option value="Diversifié">Diversifié</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Texture du sol</label>
+                        <select name="texture_sol" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                            <option value="">Sélectionner...</option>
+                            <option value="Argileux">Argileux</option>
+                            <option value="Sableux">Sableux</option>
+                            <option value="Limoneux">Limoneux</option>
+                            <option value="Caillouteux">Caillouteux</option>
+                            <option value="Mélangé/Importé">Mélangé / Importé</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 bg-gray-100 p-2 rounded">5. Travaux à réaliser</h2>
+                
+                <div class="flex flex-col md:flex-row gap-4 mb-6 bg-green-50 p-4 rounded border border-green-200">
+                    <div class="flex-grow">
+                        <label class="block text-sm font-bold text-green-800 mb-1">Ajouter une catégorie de travaux :</label>
+                        <select id="selectCategorieTravaux" class="block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                            <option value="Taille">Taille</option>
+                            <option value="Tonte">Tonte / Débroussaillage</option>
+                            <option value="Nettoyage">Nettoyage</option>
+                            <option value="Creation">Création</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button type="button" onclick="ajouterBlocTravail()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 font-bold shadow transition">
+                            + Ajouter ces travaux
+                        </button>
+                    </div>
+                </div>
+
+                <div id="conteneurTravaux" class="space-y-4"></div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 bg-gray-100 p-2 rounded">6. Divers & Validation</h2>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium">Observations Diverses</label>
+                    <textarea name="observations_diverses" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"></textarea>
+                </div>
+                
+                <div class="bg-blue-50 p-4 rounded border border-blue-200">
+                    <label class="block text-sm font-bold text-blue-800 mb-2">Signature / Validation du Client</label>
+                    <input type="text" name="signature_nom" placeholder="Taper le nom pour valider..." class="block w-full rounded-md border-gray-300 shadow-sm border p-2 mb-2">
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" name="accord_client" required class="rounded border-gray-300 text-blue-600 shadow-sm h-5 w-5">
+                        <span class="ml-2 text-blue-800 font-medium">J'accepte et valide les informations saisies sur cette fiche.</span>
+                    </label>
+                </div>
+            </section>
+
+            <div class="flex justify-end gap-4 border-t-2 pt-4">
+                <button type="button" onclick="exporterDonnees()" class="px-6 py-3 bg-green-600 text-white text-lg rounded hover:bg-green-700 font-bold shadow-lg w-full md:w-auto">Sauvegarder & Exporter (JSON)</button>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        // --- INITIALISATION DE LA CARTE (Leaflet + Geoman + Satellite Esri) ---
+        
+        // Coordonnées centrées sur la Guadeloupe par défaut avec un zoom assez proche (16)
+        const map = L.map('map').setView([15.9963, -61.7196], 16);
+
+        // Ajout de la vue Satellite (Esri World Imagery) - Permet le "sur-zoom"
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '© Esri',
+            maxNativeZoom: 19, // Résolution max de l'image satellite
+            maxZoom: 22        // Zoom artificiel autorisé très proche pour le dessin
+        }).addTo(map);
+
+        // Configuration de la langue de l'outil de dessin
+        map.pm.setLang('fr');
+
+        // Ajout des outils de dessin (Geoman)
+        map.pm.addControls({
+            position: 'topleft',
+            drawMarker: false,       // Désactivé
+            drawCircleMarker: false, // Désactivé
+            drawPolyline: false,     // Désactivé (Ligne simple)
+            drawRectangle: true,     // ACTIVÉ (Carré/Rectangle)
+            drawPolygon: true,       // ACTIVÉ (Forme libre ou triangle)
+            drawCircle: true,        // ACTIVÉ (Cercle)
+            drawText: false,         // Désactivé
+            editMode: true,          // ACTIVÉ (Modifier la forme)
+            dragMode: true,          // ACTIVÉ (Déplacer)
+            cutPolygon: false,       // Désactivé
+            removalMode: true        // ACTIVÉ (Supprimer)
+        });
+
+        // Gestion de la couleur de dessin par défaut
+        let currentDrawColor = '#22c55e'; // Vert par défaut
+        map.pm.setPathOptions({
+            color: currentDrawColor,
+            fillColor: currentDrawColor,
+            fillOpacity: 0.4,
+            weight: 3
+        });
+
+        // Fonction pour changer la couleur de dessin
+        function changerCouleur(couleur, btnElement) {
+            currentDrawColor = couleur;
+            
+            // Applique la couleur aux prochains dessins
+            map.pm.setPathOptions({
+                color: currentDrawColor,
+                fillColor: currentDrawColor,
+                fillOpacity: 0.4,
+                weight: 3
+            });
+
+            // Met à jour l'affichage des boutons (bordure noire pour le bouton actif)
+            document.querySelectorAll('.color-btn').forEach(btn => {
+                btn.classList.remove('border-gray-800');
+                btn.classList.add('border-transparent');
+            });
+            btnElement.classList.remove('border-transparent');
+            btnElement.classList.add('border-gray-800');
+        }
+
+
+        // --- BASE DE DONNÉES DES TRAVAUX ---
+        const donneesTravaux = {
+            'Taille': {
+                titre: 'Taille',
+                options: ['Architecturée', 'Douce', 'Rabattage', 'Fruitière', 'Remontée', 'Formation', 'Eclaircie'],
+                unites: ['m2', 'm3', 'diamètre', 'm de haut', 'unité']
+            },
+            'Tonte': {
+                titre: 'Tonte / Débroussaillage',
+                options: ['Avec ramassage', 'Mulching', 'Prestige', 'Fauchage', 'Passage', 'Défrichage'],
+                unites: ['m2', 'à raz', 'relance de pelouse']
+            },
+            'Nettoyage': {
+                titre: 'Nettoyage',
+                options: ['Eclaircie', 'Nettoiement', 'Désherbage', 'Rhyzome', 'Grimpantes'],
+                unites: ['m2', 'm linéaire', 'm de haut']
+            },
+            'Creation': {
+                titre: 'Création',
+                options: ['Plantation', 'Aménagement Bois', 'Aménagement Pierre', 'Artificialisation', 'Concept', 'Conception & Réalisation', 'Réalisation', 'Engazonnement', 'Maçonnerie'],
+                unites: ['m2', 'forfait', 'm linéaire']
+            }
+        };
+
+        // --- GESTION DYNAMIQUE DES TRAVAUX ---
+        function ajouterBlocTravail() {
+            const select = document.getElementById('selectCategorieTravaux');
+            const categorieKey = select.value;
+            const config = donneesTravaux[categorieKey];
+            const conteneur = document.getElementById('conteneurTravaux');
+
+            const divBloc = document.createElement('div');
+            divBloc.className = 'bloc-travail border-l-4 border-green-500 bg-white shadow p-4 rounded relative mb-4';
+            divBloc.dataset.categorie = config.titre;
+
+            const btnSupprimer = `<button type="button" onclick="this.closest('.bloc-travail').remove()" class="absolute top-2 right-2 text-red-500 hover:text-red-700 font-bold text-sm bg-red-100 px-2 py-1 rounded">X Supprimer</button>`;
+
+            let htmlOptions = '<div class="flex flex-wrap gap-4 mb-4 mt-2">';
+            config.options.forEach(opt => {
+                htmlOptions += `
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" value="${opt}" class="travail-option rounded border-gray-300 text-green-600 shadow-sm h-4 w-4">
+                        <span class="ml-2 text-sm text-gray-700">${opt}</span>
+                    </label>
+                `;
+            });
+            htmlOptions += '</div>';
+
+            let htmlQuantite = `
+                <div class="flex items-center gap-3 bg-gray-50 p-2 rounded inline-flex border flex-wrap">
+                    <input type="number" placeholder="Quantité (ex: 10)" class="travail-qte border p-1 rounded w-32 text-sm">
+                    <select class="travail-unite border p-1 rounded text-sm bg-white">
+                        <option value="">-- Unité --</option>
+            `;
+            config.unites.forEach(u => {
+                htmlQuantite += `<option value="${u}">${u}</option>`;
+            });
+            htmlQuantite += `</select></div>`;
+
+            divBloc.innerHTML = `
+                ${btnSupprimer}
+                <h3 class="font-bold text-lg text-green-800 border-b pb-1 inline-block pr-4">${config.titre}</h3>
+                ${htmlOptions}
+                ${htmlQuantite}
+            `;
+
+            conteneur.appendChild(divBloc);
+        }
+
+        // --- EXPORTATION (Infos + Travaux + Plan) ---
+        function exporterDonnees() {
+            const form = document.getElementById('chantierForm');
+            if(!form.reportValidity()) return; 
+
+            const formData = new FormData(form);
+            const data = { infos_generales: {}, travaux: [], plan_geographique: null };
+
+            // 1. Infos générales
+            for (let [key, value] of formData.entries()) {
+                if (data.infos_generales[key]) {
+                    if (!Array.isArray(data.infos_generales[key])) {
+                        data.infos_generales[key] = [data.infos_generales[key]];
+                    }
+                    data.infos_generales[key].push(value);
+                } else {
+                    data.infos_generales[key] = value;
+                }
+            }
+
+            // 2. Travaux dynamiques
+            const blocsTravaux = document.querySelectorAll('.bloc-travail');
+            blocsTravaux.forEach(bloc => {
+                const categorie = bloc.dataset.categorie;
+                const optionsCochees = Array.from(bloc.querySelectorAll('.travail-option:checked')).map(cb => cb.value);
+                const quantite = bloc.querySelector('.travail-qte').value;
+                const unite = bloc.querySelector('.travail-unite').value;
+
+                if (optionsCochees.length > 0 || quantite !== "") {
+                    data.travaux.push({ categorie: categorie, options_selectionnees: optionsCochees, quantite: quantite, unite: unite });
+                }
+            });
+
+            // 3. Plan Géographique (Récupération des dessins de la carte)
+            const mapLayers = map.pm.getGeomanDrawLayers();
+            const geojsonFeatures = [];
+            
+            mapLayers.forEach(layer => {
+                const geojson = layer.toGeoJSON();
+                // On inclut la couleur choisie dans les propriétés du dessin
+                geojson.properties.color = layer.options.color || '#22c55e';
+                
+                // Hack pour les cercles (le format GeoJSON standard ne gère pas les cercles, on stocke donc le rayon)
+                if(layer instanceof L.Circle) {
+                    geojson.properties.radius = layer.getRadius();
+                    geojson.properties.type = "Circle";
+                }
+                
+                geojsonFeatures.push(geojson);
+            });
+
+            if (geojsonFeatures.length > 0) {
+                data.plan_geographique = {
+                    type: "FeatureCollection",
+                    features: geojsonFeatures
+                };
+            }
+
+            // 4. Téléchargement du JSON final
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            
+            const nomFichier = data.infos_generales.client_nom ? data.infos_generales.client_nom.replace(/\s+/g, '_') : 'client_inconnu';
+            const dateFichier = new Date().toISOString().split('T')[0];
+            downloadAnchorNode.setAttribute("download", `Chantier_${nomFichier}_${dateFichier}.json`);
+            
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+
+            alert("Les données et le plan du chantier ont été exportés avec succès !");
+        }
+    </script>
+</body>
+</html>
