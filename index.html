@@ -63,9 +63,9 @@
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium">Réseaux (Cochez si présents)</label>
                         <div class="mt-2 space-x-4">
-                            <label class="inline-flex items-center"><input type="checkbox" name="reseaux_cables" value="Oui" class="rounded border-gray-300 text-green-600 shadow-sm"> <span class="ml-2">Câbles / Tuyauterie</span></label>
-                            <label class="inline-flex items-center"><input type="checkbox" name="reseaux_regard" value="Oui" class="rounded border-gray-300 text-green-600 shadow-sm"> <span class="ml-2">Regard / Sortie visible</span></label>
-                            <label class="inline-flex items-center"><input type="checkbox" name="reseaux_arrosage" value="Oui" class="rounded border-gray-300 text-green-600 shadow-sm"> <span class="ml-2">Arrosage</span></label>
+                            <label class="inline-flex items-center"><input type="checkbox" name="reseaux" value="Câbles/Tuyauterie" class="rounded border-gray-300 text-green-600 shadow-sm"> <span class="ml-2">Câbles / Tuyauterie</span></label>
+                            <label class="inline-flex items-center"><input type="checkbox" name="reseaux" value="Regard" class="rounded border-gray-300 text-green-600 shadow-sm"> <span class="ml-2">Regard / Sortie visible</span></label>
+                            <label class="inline-flex items-center"><input type="checkbox" name="reseaux" value="Arrosage" class="rounded border-gray-300 text-green-600 shadow-sm"> <span class="ml-2">Arrosage</span></label>
                         </div>
                     </div>
                 </div>
@@ -125,82 +125,25 @@
             <section>
                 <h2 class="text-xl font-semibold text-gray-700 mb-4 bg-gray-100 p-2 rounded">4. Travaux à réaliser</h2>
                 
-                <div class="mb-4 border border-gray-200 p-4 rounded">
-                    <h3 class="font-medium text-lg mb-2 text-green-700">Taille</h3>
-                    <div class="flex flex-wrap gap-4 mb-2">
-                        <label><input type="checkbox" name="taille_type" value="Architecturée"> Architecturée</label>
-                        <label><input type="checkbox" name="taille_type" value="Douce"> Douce</label>
-                        <label><input type="checkbox" name="taille_type" value="Rabattage"> Rabattage</label>
-                        <label><input type="checkbox" name="taille_type" value="Fruitière"> Fruitière</label>
-                        <label><input type="checkbox" name="taille_type" value="Remontée"> Remontée</label>
-                        <label><input type="checkbox" name="taille_type" value="Formation"> Formation</label>
-                        <label><input type="checkbox" name="taille_type" value="Eclaircie"> Éclaircie</label>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <input type="number" name="taille_qte" placeholder="Quantité" class="border p-1 rounded w-24">
-                        <select name="taille_unite" class="border p-1 rounded">
-                            <option value="m2">m²</option>
-                            <option value="m3">m³</option>
-                            <option value="diam">Diamètre</option>
-                            <option value="m_haut">m de haut</option>
-                            <option value="unite">Unité</option>
+                <div class="flex flex-col md:flex-row gap-4 mb-6 bg-green-50 p-4 rounded border border-green-200">
+                    <div class="flex-grow">
+                        <label class="block text-sm font-bold text-green-800 mb-1">Ajouter une catégorie de travaux :</label>
+                        <select id="selectCategorieTravaux" class="block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                            <option value="Taille">Taille</option>
+                            <option value="Tonte">Tonte / Débroussaillage</option>
+                            <option value="Nettoyage">Nettoyage</option>
+                            <option value="Creation">Création</option>
                         </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button type="button" onclick="ajouterBlocTravail()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 font-bold shadow transition">
+                            + Ajouter ces travaux
+                        </button>
                     </div>
                 </div>
 
-                <div class="mb-4 border border-gray-200 p-4 rounded">
-                    <h3 class="font-medium text-lg mb-2 text-green-700">Tonte / Débroussaillage</h3>
-                    <div class="flex flex-wrap gap-4 mb-2">
-                        <label><input type="checkbox" name="tonte_type" value="Ramassage"> Avec ramassage</label>
-                        <label><input type="checkbox" name="tonte_type" value="Mulching"> Mulching</label>
-                        <label><input type="checkbox" name="tonte_type" value="Prestige"> Prestige</label>
-                        <label><input type="checkbox" name="tonte_type" value="Fauchage"> Fauchage</label>
-                        <label><input type="checkbox" name="tonte_type" value="Passage"> Passage</label>
-                        <label><input type="checkbox" name="tonte_type" value="Défrichage"> Défrichage</label>
+                <div id="conteneurTravaux" class="space-y-4">
                     </div>
-                    <div class="flex items-center gap-2">
-                        <input type="number" name="tonte_qte" placeholder="Quantité" class="border p-1 rounded w-24">
-                        <select name="tonte_unite" class="border p-1 rounded">
-                            <option value="m2">m²</option>
-                            <option value="a_raz">À ras</option>
-                            <option value="relance">Relance de pelouse</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="mb-4 border border-gray-200 p-4 rounded">
-                    <h3 class="font-medium text-lg mb-2 text-green-700">Nettoyage</h3>
-                    <div class="flex flex-wrap gap-4 mb-2">
-                        <label><input type="checkbox" name="nettoyage_type" value="Eclaircie"> Éclaircie</label>
-                        <label><input type="checkbox" name="nettoyage_type" value="Nettoiement"> Nettoiement</label>
-                        <label><input type="checkbox" name="nettoyage_type" value="Désherbage"> Désherbage</label>
-                        <label><input type="checkbox" name="nettoyage_type" value="Rhyzome"> Rhizome</label>
-                        <label><input type="checkbox" name="nettoyage_type" value="Grimpantes"> Grimpantes</label>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <input type="number" name="nettoyage_qte" placeholder="Quantité" class="border p-1 rounded w-24">
-                        <select name="nettoyage_unite" class="border p-1 rounded">
-                            <option value="m2">m²</option>
-                            <option value="m_lineaire">m linéaire</option>
-                            <option value="m_haut">m de haut</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="border border-gray-200 p-4 rounded">
-                    <h3 class="font-medium text-lg mb-2 text-green-700">Création</h3>
-                    <div class="flex flex-wrap gap-4">
-                        <label><input type="checkbox" name="creation_type" value="Plantation"> Plantation</label>
-                        <label><input type="checkbox" name="creation_type" value="Aménagement Bois"> Aménagement bois</label>
-                        <label><input type="checkbox" name="creation_type" value="Aménagement Pierre"> Aménagement pierre</label>
-                        <label><input type="checkbox" name="creation_type" value="Artificialisation"> Artificialisation</label>
-                        <label><input type="checkbox" name="creation_type" value="Concept"> Concept</label>
-                        <label><input type="checkbox" name="creation_type" value="Conception_Realisation"> Conception & Réalisation</label>
-                        <label><input type="checkbox" name="creation_type" value="Realisation"> Réalisation</label>
-                        <label><input type="checkbox" name="creation_type" value="Engazonnement"> Engazonnement</label>
-                        <label><input type="checkbox" name="creation_type" value="Maconnerie"> Maçonnerie</label>
-                    </div>
-                </div>
             </section>
 
             <section>
@@ -221,44 +164,134 @@
             </section>
 
             <div class="flex justify-end gap-4 border-t-2 pt-4">
-                <button type="reset" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 font-medium">Réinitialiser</button>
-                <button type="button" onclick="exporterDonnees()" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 font-bold shadow-lg">Sauvegarder & Exporter (JSON)</button>
+                <button type="button" onclick="exporterDonnees()" class="px-6 py-3 bg-green-600 text-white text-lg rounded hover:bg-green-700 font-bold shadow-lg w-full md:w-auto">Sauvegarder & Exporter (JSON)</button>
             </div>
 
         </form>
     </div>
 
     <script>
+        // --- 1. Base de données des options de travaux (tirée de votre tableau) ---
+        const donneesTravaux = {
+            'Taille': {
+                titre: 'Taille',
+                options: ['Architecturée', 'Douce', 'Rabattage', 'Fruitière', 'Remontée', 'Formation', 'Eclaircie'],
+                unites: ['m2', 'm3', 'diamètre', 'm de haut', 'unité']
+            },
+            'Tonte': {
+                titre: 'Tonte / Débroussaillage',
+                options: ['Avec ramassage', 'Mulching', 'Prestige', 'Fauchage', 'Passage', 'Défrichage'],
+                unites: ['m2', 'à raz', 'relance de pelouse']
+            },
+            'Nettoyage': {
+                titre: 'Nettoyage',
+                options: ['Eclaircie', 'Nettoiement', 'Désherbage', 'Rhyzome', 'Grimpantes'],
+                unites: ['m2', 'm linéaire', 'm de haut']
+            },
+            'Creation': {
+                titre: 'Création',
+                options: ['Plantation', 'Aménagement Bois', 'Aménagement Pierre', 'Artificialisation', 'Concept', 'Conception & Réalisation', 'Réalisation', 'Engazonnement', 'Maçonnerie'],
+                unites: ['m2', 'forfait', 'm linéaire']
+            }
+        };
+
+        // --- 2. Fonction pour ajouter un bloc de travaux sur l'écran ---
+        function ajouterBlocTravail() {
+            const select = document.getElementById('selectCategorieTravaux');
+            const categorieKey = select.value;
+            const config = donneesTravaux[categorieKey];
+            const conteneur = document.getElementById('conteneurTravaux');
+
+            // Création de l'élément div principal
+            const divBloc = document.createElement('div');
+            divBloc.className = 'bloc-travail border-l-4 border-green-500 bg-white shadow p-4 rounded relative mb-4';
+            divBloc.dataset.categorie = config.titre;
+
+            // Bouton de suppression
+            const btnSupprimer = `<button type="button" onclick="this.closest('.bloc-travail').remove()" class="absolute top-2 right-2 text-red-500 hover:text-red-700 font-bold text-sm bg-red-100 px-2 py-1 rounded">X Supprimer</button>`;
+
+            // Générer les cases à cocher (options)
+            let htmlOptions = '<div class="flex flex-wrap gap-4 mb-4 mt-2">';
+            config.options.forEach(opt => {
+                htmlOptions += `
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" value="${opt}" class="travail-option rounded border-gray-300 text-green-600 shadow-sm h-4 w-4">
+                        <span class="ml-2 text-sm text-gray-700">${opt}</span>
+                    </label>
+                `;
+            });
+            htmlOptions += '</div>';
+
+            // Générer les champs Quantité et Unité
+            let htmlQuantite = `
+                <div class="flex items-center gap-3 bg-gray-50 p-2 rounded inline-flex border">
+                    <input type="number" placeholder="Quantité (ex: 10)" class="travail-qte border p-1 rounded w-32 text-sm">
+                    <select class="travail-unite border p-1 rounded text-sm bg-white">
+                        <option value="">-- Unité --</option>
+            `;
+            config.unites.forEach(u => {
+                htmlQuantite += `<option value="${u}">${u}</option>`;
+            });
+            htmlQuantite += `</select></div>`;
+
+            // Assemblage du bloc
+            divBloc.innerHTML = `
+                ${btnSupprimer}
+                <h3 class="font-bold text-lg text-green-800 border-b pb-1 inline-block pr-4">${config.titre}</h3>
+                ${htmlOptions}
+                ${htmlQuantite}
+            `;
+
+            conteneur.appendChild(divBloc);
+        }
+
+        // --- 3. Fonction pour récupérer et exporter toutes les données ---
         function exporterDonnees() {
             const form = document.getElementById('chantierForm');
-            
-            // Vérification de la validation requise
             if(!form.reportValidity()) return; 
 
             const formData = new FormData(form);
-            const data = {};
+            const data = { infos_generales: {}, travaux: [] };
 
-            // Convertir FormData en objet JSON (gère les checkboxes multiples)
+            // 1. Récupérer les infos classiques (Client, terrain, validation)
             for (let [key, value] of formData.entries()) {
-                if (data[key]) {
-                    if (!Array.isArray(data[key])) {
-                        data[key] = [data[key]];
+                if (data.infos_generales[key]) {
+                    if (!Array.isArray(data.infos_generales[key])) {
+                        data.infos_generales[key] = [data.infos_generales[key]];
                     }
-                    data[key].push(value);
+                    data.infos_generales[key].push(value);
                 } else {
-                    data[key] = value;
+                    data.infos_generales[key] = value;
                 }
             }
 
-            // Création du fichier JSON
+            // 2. Récupérer les blocs dynamiques de travaux
+            const blocsTravaux = document.querySelectorAll('.bloc-travail');
+            blocsTravaux.forEach(bloc => {
+                const categorie = bloc.dataset.categorie;
+                const optionsCochees = Array.from(bloc.querySelectorAll('.travail-option:checked')).map(cb => cb.value);
+                const quantite = bloc.querySelector('.travail-qte').value;
+                const unite = bloc.querySelector('.travail-unite').value;
+
+                // N'ajouter que s'il y a au moins une option cochée ou une quantité saisie
+                if (optionsCochees.length > 0 || quantite !== "") {
+                    data.travaux.push({
+                        categorie: categorie,
+                        options_selectionnees: optionsCochees,
+                        quantite: quantite,
+                        unite: unite
+                    });
+                }
+            });
+
+            // 3. Création et téléchargement du fichier JSON
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
             const downloadAnchorNode = document.createElement('a');
             downloadAnchorNode.setAttribute("href", dataStr);
             
-            // Nom du fichier avec le nom du client et la date
-            const nomFichier = data.client_nom ? data.client_nom.replace(/\s+/g, '_') : 'client_inconnu';
+            const nomFichier = data.infos_generales.client_nom ? data.infos_generales.client_nom.replace(/\s+/g, '_') : 'client_inconnu';
             const dateFichier = new Date().toISOString().split('T')[0];
-            downloadAnchorNode.setAttribute("download", `Fiche_Chantier_${nomFichier}_${dateFichier}.json`);
+            downloadAnchorNode.setAttribute("download", `Chantier_${nomFichier}_${dateFichier}.json`);
             
             document.body.appendChild(downloadAnchorNode);
             downloadAnchorNode.click();
