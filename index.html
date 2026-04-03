@@ -2,542 +2,481 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mapoupaysage - Diagnostic V15</title>
-    <style>
-        :root { 
-            --dark-green: #0a312d; 
-            --gold: #fbc02d;       
-            --light-green: #4caf50; 
-            --bg-gray: #f5f5f5;
-            --border: #ddd;
-        }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiche de Chantier</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
 
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg-gray); padding-bottom: 100px; touch-action: manipulation; }
-        
-        /* HEADER */
-        header { 
-            background: var(--dark-green); 
-            color: white; padding: 15px; text-align: center; 
-            border-bottom: 4px solid var(--gold);
-        }
-        .logo-box {
-            width: 80px; height: 80px; margin: 0 auto 5px;
-            background: white; border-radius: 50%; border: 2px solid var(--gold);
-            overflow: hidden; display: flex; align-items: center; justify-content: center;
-        }
-        .logo-box img { width: 100%; height: 100%; object-fit: cover; }
-        header h1 { margin: 0; font-size: 1.4rem; color: var(--gold); letter-spacing: 1px; text-transform: uppercase; }
-        .slogan { font-size: 0.7rem; opacity: 0.9; font-weight: bold; }
-
-        /* NAVIGATION */
-        .tabs-nav { display: flex; background: var(--dark-green); overflow-x: auto; border-bottom: 1px solid var(--gold); position: sticky; top: 0; z-index: 5000; }
-        .tab-btn { flex: 1; min-width: 90px; padding: 15px 5px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #fff; font-size: 0.8rem; opacity: 0.6; transition: 0.3s; }
-        .tab-btn.active-tab { opacity: 1; color: var(--gold); border-bottom: 3px solid var(--gold); background: rgba(255,255,255,0.05); }
-
-        .container { max-width: 900px; margin: 15px auto; padding: 0 10px; }
-        .tab-content { display: none; }
-        .tab-content.show-content { display: block; }
-
-        /* CARTES ET INPUTS */
-        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; border-top: 4px solid var(--light-green); }
-        h2 { color: var(--dark-green); font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-top: 0; display: flex; align-items: center; gap: 10px; }
-        
-        .row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
-        .col { flex: 1; min-width: 170px; }
-        label { display: block; margin-bottom: 5px; font-size: 0.75rem; font-weight: bold; color: #333; text-transform: uppercase; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; font-size: 1rem; background: #fff; }
-
-        /* TRAVAUX */
-        .work-item { border-left: 5px solid var(--gold); background: #fafafa; margin-bottom: 12px; padding: 15px; border-radius: 4px; position: relative; }
-        .btn-add { width: 100%; padding: 15px; background: var(--dark-green); color: var(--gold); border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1rem; }
-        .btn-del-task { background: #ff5252; color: white; border: none; padding: 8px; border-radius: 4px; margin-top: 10px; width: 100%; font-weight: bold; }
-
-        /* PLAN GRAPHIQUE */
-        #canvas-area { height: 65vh; background: white; background-image: radial-gradient(#ccc 1px, transparent 1px); background-size: 30px 30px; border: 2px solid var(--dark-green); border-radius: 8px; position: relative; overflow: hidden; touch-action: none; }
-        .toolbar { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; white-space: nowrap; -webkit-overflow-scrolling: touch; }
-        .tool { min-width: 65px; height: 65px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #ccc; border-radius: 8px; background: white; font-size: 22px; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .tool span { font-size: 10px; margin-top: 2px; color: var(--dark-green); font-weight: bold; }
-        
-        /* Objets Plan */
-        .map-obj { position: absolute; min-width: 50px; min-height: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; user-select: none; box-sizing: border-box; }
-        .obj-emoji { flex: 1; display: flex; align-items: center; justify-content: center; line-height: 1; pointer-events: none; }
-        .obj-label { font-size: 10px; font-weight: bold; background: rgba(255,255,255,0.8); color: #000; padding: 2px 4px; border-radius: 4px; margin-bottom: 2px; pointer-events: none; white-space: nowrap; border: 1px solid #ccc; transform: translateY(15px); }
-
-        /* Contrôles Tactiles */
-        .resizer { width: 30px; height: 30px; background: var(--gold); border-radius: 50%; position: absolute; bottom: -10px; right: -10px; z-index: 1001; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .obj-del { width: 26px; height: 26px; background: #ff5252; color: white; border-radius: 50%; position: absolute; top: -10px; right: -10px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; z-index: 1001; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .rotator { width: 26px; height: 26px; background: var(--light-green); border-radius: 50%; position: absolute; top: -35px; left: 50%; transform: translateX(-50%); z-index: 1001; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; color:white; font-size:16px; }
-        .rotator::after { content: ''; position: absolute; top: 24px; left: 11px; width: 2px; height: 10px; background: var(--light-green); }
-
-        /* Styles Spécifiques */
-        .style-maison { background: #cfd8dc; border: 3px solid #546e7a; border-radius: 4px; }
-        .style-cloture { background: repeating-linear-gradient(90deg, #795548, #795548 10px, transparent 10px, transparent 15px); border: 2px solid rgba(121, 85, 72, 0.3); border-radius: 4px; }
-        .style-dalle { background: #e0e0e0; border: 1px solid #9e9e9e; }
-        .style-pelouse { background: #a5d6a7; border: 1px solid #4caf50; opacity: 0.8; }
-        .style-arbre { background: rgba(76, 175, 80, 0.4); border: 2px solid var(--dark-green); border-radius: 50%; }
-        .style-text { background: rgba(255,255,255,0.95); border: 1px solid var(--dark-green); font-size: 1rem !important; min-width: 100px; padding: 8px; border-radius: 4px; z-index: 200; }
-
-        /* PHOTOS */
-        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 15px; }
-        .photo-item { position: relative; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; height: 150px; }
-        .photo-item img { width: 100%; height: 100%; object-fit: cover; }
-        .btn-del-photo { position: absolute; top: 5px; right: 5px; background: red; color: white; border: none; width: 25px; height: 25px; border-radius: 50%; font-weight: bold; cursor: pointer; }
-
-        /* ACTIONS */
-        .actions-bar { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 15px; z-index: 6000; }
-        .fab { width: 65px; height: 65px; border-radius: 50%; border: none; color: white; font-size: 28px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; }
-
-        @media print {
-            .tabs-nav, .actions-bar, .toolbar, .btn-add, .btn-del-task, .resizer, .obj-del, .rotator, .btn-del-photo, .btn-import-photo { display: none !important; }
-            .tab-content { display: block !important; page-break-inside: avoid; margin-bottom: 20px; }
-            #canvas-area { height: 17cm; border: 2px solid #000; page-break-before: always; }
-            header { background: white; color: black; border-bottom: 2px solid black; }
-            h1 { color: black; }
-            .photo-grid { grid-template-columns: repeat(2, 1fr); }
-            .photo-item { height: 200px; border: 1px solid #000; }
-        }
-    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.2/dist/leaflet-geoman.css" />
+    <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@2.14.2/dist/leaflet-geoman.min.js"></script>
 </head>
-<body>
+<body class="bg-gray-100 text-gray-800 antialiased p-4 md:p-8" onload="actualiserListeSauvegardes()">
 
-<header>
-    <div class="logo-box">
-        <img src="Color preview.jpg" alt="Logo" onerror="this.style.display='none'; this.parentNode.innerText='MAPOU'">
-    </div>
-    <h1>Mapoupaysage</h1>
-    <div class="slogan">S'ASSOCIER AVEC LE VIVANT</div>
-</header>
-
-<div class="tabs-nav">
-    <button class="tab-btn active-tab" onclick="switchTab('tab-client', this)">Client</button>
-    <button class="tab-btn" onclick="switchTab('tab-doleances', this)">Doléances</button>
-    <button class="tab-btn" onclick="switchTab('tab-station', this)">Station</button>
-    <button class="tab-btn" onclick="switchTab('tab-travaux', this)">Travaux</button>
-    <button class="tab-btn" onclick="switchTab('tab-plan', this)">Plan</button>
-    <button class="tab-btn" onclick="switchTab('tab-photos', this)">Photos</button>
-    <button class="tab-btn" onclick="switchTab('tab-archives', this)" style="background: rgba(251,192,45,0.15);">Archives</button>
-</div>
-
-<div class="container">
-    <div id="tab-client" class="tab-content show-content">
-        <div class="card">
-            <h2>👤 Information & Logistique</h2>
-            <div class="row">
-                <div class="col"><label>Nom Client *</label><input type="text" id="c_nom" placeholder="Obligatoire pour sauvegarder"></div>
-                <div class="col"><label>Tél</label><input type="tel" id="c_tel"></div>
-            </div>
-            <div class="row">
-                <div class="col"><label>Date Visite</label><input type="date" id="c_date_v"></div>
-                <div class="col"><label>Chantier Souhaité</label><input type="date" id="c_date_c"></div>
-            </div>
-            <label>Adresse</label><input type="text" id="c_adr">
-            <div class="row" style="margin-top:10px;">
-                <div class="col"><label>Stationnement</label><select id="l_stat"><option>Facile / Devant</option><option>Difficile / Rue étroite</option><option>Éloigné (> 20m)</option></select></div>
-                <div class="col"><label>Passage</label><select id="l_pass"><option>Libre</option><option>Standard (>1m)</option><option>Étroit (<80cm)</option><option>Portail</option><option>Garage/Porte</option></select></div>
-            </div>
-            <div class="row">
-                <div class="col"><label>Réseaux</label><select id="l_res"><option>Aucun</option><option>Câbles/Tuyaux/Bornes</option><option>Arrosage aérien</option></select></div>
-                <div class="col"><label>Déchets</label><select id="l_dech"><option>Déchetterie</option><option>Bord de route</option><option>Broyage</option><option>Stockage sur place</option></select></div>
-            </div>
-        </div>
-        <div class="card">
-            <h2>✍️ Validation</h2>
-            <div style="height:60px; border:2px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#999; font-weight:bold;">SIGNATURE CLIENT</div>
-        </div>
-    </div>
-
-    <div id="tab-doleances" class="tab-content">
-        <div class="card">
-            <h2>📜 Besoins & Contrat</h2>
-            <div class="row">
-                <div class="col"><label>Contrat</label><select id="d_contrat"><option>Ponctuel</option><option>Quinzomadaire</option><option>Trihebdomadaire</option><option>Mensuel</option><option>Bimestriel</option><option>Trimestriel</option><option>Semestriel</option></select></div>
-                <div class="col"><label>Heures/Jours</label><input type="text" id="d_heures"></div>
-            </div>
-            <label>Notes / Doléances</label><textarea id="d_notes" rows="4"></textarea>
-            <label>Budget (€)</label><input type="number" id="d_budget">
-        </div>
-    </div>
-
-    <div id="tab-station" class="tab-content">
-        <div class="card">
-            <h2>🌍 Sol & Topographie</h2>
-            <div class="row">
-                <div class="col"><label>Topographie</label><select id="s_topo"><option>Plat (0%)</option><option>Diversifié</option><option>Pente douce</option><option>Talus raide</option></select></div>
-                <div class="col"><label>Texture</label><select id="s_texture"><option>Argileux</option><option>Sableux</option><option>Limoneux</option><option>Caillouteux</option></select></div>
-            </div>
-            <label>Notes Agronomiques</label><textarea id="s_notes" rows="3"></textarea>
-        </div>
-    </div>
-
-    <div id="tab-travaux" class="tab-content">
-        <div class="card">
-            <h2>🛠️ Prestations</h2>
-            <div id="tasks-list"></div>
-            <button class="btn-add" onclick="addTask()">+ Ajouter une tâche</button>
-        </div>
-    </div>
-
-    <div id="tab-plan" class="tab-content">
-        <div class="card">
-            <div class="toolbar">
-                <div class="tool" onclick="addMapObj('style-text', 'Note', 'Note')">📝<span>Note</span></div>
-                <div class="tool" onclick="addMapObj('style-cloture', '', 'Clôture')">⛓️<span>Clôture</span></div>
-                <div class="tool" onclick="addMapObj('style-maison', '🏠', 'Maison')">🏠<span>Maison</span></div>
-                <div class="tool" onclick="addMapObj('style-dalle', '⬜', 'Dalle')">⬜<span>Dalle</span></div>
-                <div class="tool" onclick="addMapObj('style-pelouse', '🟩', 'Pelouse')">🟩<span>Pelouse</span></div>
-                <div class="tool" onclick="addMapObj('style-arbre', '🌳', 'Arbre')">🌳<span>Arbre</span></div>
-                <div class="tool" onclick="addMapObj('style-massif', '🌸', 'Massif')">🌸<span>Massif</span></div>
-                <div class="tool" onclick="addMapObj('style-eau', '💧', 'Eau')">💧<span>Eau</span></div>
-                <div class="tool" onclick="addMapObj('style-danger', '⚠️', 'Danger')">⚠️<span>Danger</span></div>
-                <div class="tool" onclick="clearMap()" style="color:red">🗑️<span>RAZ</span></div>
-            </div>
-            <div id="canvas-area"></div>
-        </div>
-    </div>
-
-    <div id="tab-photos" class="tab-content">
-        <div class="card">
-            <h2>📷 Photos du Chantier</h2>
-            <button class="btn-add btn-import-photo" onclick="document.getElementById('photoInput').click()">+ Prendre / Ajouter Photo</button>
-            <input type="file" id="photoInput" style="display:none" accept="image/*" multiple onchange="handlePhotos(this)">
-            <div id="photo-container" class="photo-grid"></div>
-        </div>
-    </div>
-
-    <div id="tab-archives" class="tab-content">
-        <div class="card">
-            <h2>Gestion des Fiches</h2>
-            <button class="btn-add" style="background:#fbc02d; color:#0a312d; margin-bottom:15px;" onclick="nouveauChantier()">📄 CRÉER UNE NOUVELLE FICHE CLIENT</button>
-            
-            <div class="row">
-                <div class="col"><button class="btn-add" style="background:#1976d2" onclick="exportBackup()">📤 Sauvegarder tout (JSON)</button></div>
-                <div class="col"><button class="btn-add" style="background:#546e7a" onclick="document.getElementById('importFile').click()">📥 Restaurer Backup</button></div>
-                <input type="file" id="importFile" style="display:none" onchange="importBackup(this)">
-            </div>
-        </div>
-        <div class="card">
-            <h2>Dossiers Enregistrés (iPad)</h2>
-            <div id="archive-list"></div>
-        </div>
-    </div>
-</div>
-
-<div class="actions-bar">
-    <button class="fab btn-save" style="background:var(--dark-green); color:var(--gold);" onclick="saveData()">💾</button>
-    <button class="fab btn-print" style="background:#333;" onclick="window.print()">🖨️</button>
-</div>
-
-<script>
-    // --- VARIABLE GLOBALE POUR LA MISE À JOUR ---
-    let currentChantierId = null;
-
-    function switchTab(id, btn) {
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('show-content'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
-        document.getElementById(id).classList.add('show-content');
-        btn.classList.add('active-tab');
-        if(id === 'tab-archives') displayArchives();
-    }
-
-    // --- 1. TRAVAUX ---
-    function addTask(data = null) {
-        const div = document.createElement('div');
-        div.className = 'work-item';
-        div.innerHTML = `
-            <div class="row">
-                <div class="col"><label>Type</label><select class="t-type" onchange="updateFinitions(this)">
-                    <option value="taille" ${data?.type=='taille'?'selected':''}>Taille</option>
-                    <option value="tonte" ${data?.type=='tonte'?'selected':''}>Tonte</option>
-                    <option value="nettoyage" ${data?.type=='nettoyage'?'selected':''}>Nettoyage</option>
-                    <option value="elagage" ${data?.type=='elagage'?'selected':''}>Élagage</option>
-                    <option value="debrou" ${data?.type=='debrou'?'selected':''}>Débroussaillage</option>
-                    <option value="creation" ${data?.type=='creation'?'selected':''}>Création</option>
-                </select></div>
-                <div class="col"><label>Finition</label><select class="t-fin"><option>${data?.fin || 'Standard'}</option></select></div>
-            </div>
-            <div class="row">
-                <div class="col"><input type="number" class="t-qty" value="${data?.qty||''}" placeholder="Qté"></div>
-                <div class="col"><label>Unité</label><select class="t-unit">
-                    <option ${data?.unit=='m²'?'selected':''}>m²</option><option ${data?.unit=='ml'?'selected':''}>ml</option>
-                    <option ${data?.unit=='m³'?'selected':''}>m³</option><option ${data?.unit=='U'?'selected':''}>U</option>
-                    <option ${data?.unit=='h'?'selected':''}>h</option><option ${data?.unit=='diam'?'selected':''}>diam</option>
-                    <option ${data?.unit=='haut'?'selected':''}>haut</option>
-                </select></div>
-            </div>
-            <button class="btn-del-task" onclick="this.parentElement.remove()">Supprimer</button>
-        `;
-        document.getElementById('tasks-list').appendChild(div);
-        if(!data) updateFinitions(div.querySelector('.t-type'));
-    }
-
-    function updateFinitions(sel) {
-        const fin = sel.parentElement.nextElementSibling.querySelector('.t-fin');
-        const opts = {
-            taille: ["Architecturée", "Douce", "Rabattage", "Fruitière"],
-            tonte: ["Ramassage", "Mulching", "Prestige"],
-            nettoyage: ["Éclaircie", "Grille", "Désherbage", "Défrichage"],
-            elagage: ["Formation", "Éclaircie", "Démontage", "Rognage"],
-            debrou: ["Fauchage", "Broyage", "Mise à blanc"],
-            creation: ["Plantation", "Engazonnement", "Maçonnerie"]
-        };
-        fin.innerHTML = "";
-        (opts[sel.value] || ["Standard"]).forEach(o => { let opt = document.createElement('option'); opt.text = o; fin.add(opt); });
-    }
-
-    // --- 2. PLAN ---
-    const canvas = document.getElementById('canvas-area');
-    let zIdx = 100;
-
-    function addMapObj(cls, content, labelText, savedData = null) {
-        const el = document.createElement('div');
-        el.className = `map-obj ${cls}`;
-        const isText = (cls === 'style-text');
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
         
-        if(isText) {
-            el.contentEditable = "true"; el.innerText = content;
-        } else {
-            const span = document.createElement('span'); span.className = 'obj-emoji'; span.innerHTML = content; el.appendChild(span);
-            const lbl = document.createElement('div'); lbl.className = 'obj-label'; lbl.innerText = labelText; el.appendChild(lbl);
-        }
+        <h1 class="text-3xl font-bold text-green-700 border-b-2 border-green-500 pb-2 mb-6">Fiche de Chantier</h1>
 
-        let defW = (cls === 'style-cloture') ? "150px" : (isText ? "120px" : "80px");
-        let defH = (cls === 'style-cloture') ? "15px" : (isText ? "60px" : "80px");
-
-        el.style.width = savedData?.w || defW;
-        el.style.height = savedData?.h || defH;
-        el.style.top = savedData?.t || "100px";
-        el.style.left = savedData?.l || "100px";
-        if(savedData?.rot) el.style.transform = savedData.rot;
-
-        if(!isText && !cls.includes('cloture')) {
-            el.querySelector('.obj-emoji').style.fontSize = savedData?.fs || "45px";
-        }
-
-        const del = document.createElement('div'); del.className = "obj-del"; del.innerHTML = "X";
-        del.onclick = (e) => { e.stopPropagation(); el.remove(); }; el.appendChild(del);
-        const res = document.createElement('div'); res.className = "resizer"; el.appendChild(res);
-        const rot = document.createElement('div'); rot.className = "rotator"; rot.innerHTML = "⟳"; el.appendChild(rot);
-
-        setupDraggable(el);
-        setupResizer(el, res, isText, cls);
-        setupRotator(el, rot);
-        canvas.appendChild(el);
-    }
-
-    function setupDraggable(el) {
-        let isM = false, ox, oy;
-        el.addEventListener('touchstart', (e) => {
-            if(e.target.className.match(/resizer|obj-del|rotator/)) return;
-            isM = true; const t = e.touches[0];
-            ox = t.clientX - el.offsetLeft; oy = t.clientY - el.offsetTop;
-            el.style.zIndex = zIdx++;
-        }, {passive:false});
-        document.addEventListener('touchmove', (e) => {
-            if(!isM) return; const t = e.touches[0];
-            el.style.left = (t.clientX - ox) + 'px'; el.style.top = (t.clientY - oy) + 'px';
-        }, {passive:false});
-        document.addEventListener('touchend', () => isM = false);
-    }
-
-    function setupResizer(el, res, isText, cls) {
-        let isR = false;
-        res.addEventListener('touchstart', (e) => { isR = true; e.preventDefault(); e.stopPropagation(); }, {passive:false});
-        document.addEventListener('touchmove', (e) => {
-            if(!isR) return; const t = e.touches[0];
-            const r = canvas.getBoundingClientRect();
-            const nw = t.clientX - r.left - parseFloat(el.style.left);
-            const nh = t.clientY - r.top - parseFloat(el.style.top);
-            if(nw > 20) el.style.width = nw + 'px';
-            if(nh > 10) el.style.height = nh + 'px';
-            if(!isText && !cls.includes('cloture')) el.querySelector('.obj-emoji').style.fontSize = (Math.min(nw, nh) * 0.6) + 'px';
-        }, {passive:false});
-        document.addEventListener('touchend', () => isR = false);
-    }
-
-    function setupRotator(el, rot) {
-        let isRo = false;
-        rot.addEventListener('touchstart', (e) => { isRo = true; e.preventDefault(); e.stopPropagation(); }, {passive:false});
-        document.addEventListener('touchmove', (e) => {
-            if(!isRo) return; const t = e.touches[0];
-            const r = el.getBoundingClientRect();
-            const cx = r.left + r.width/2; const cy = r.top + r.height/2;
-            const deg = Math.atan2(t.clientY - cy, t.clientX - cx) * 180 / Math.PI;
-            el.style.transform = `rotate(${deg + 90}deg)`;
-        }, {passive:false});
-        document.addEventListener('touchend', () => isRo = false);
-    }
-
-    function clearMap() { if(confirm("Effacer tout ?")) canvas.innerHTML = ''; }
-
-    // --- 3. PHOTOS ---
-    function handlePhotos(input) {
-        if(input.files) {
-            Array.from(input.files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const div = document.createElement('div');
-                    div.className = 'photo-item';
-                    div.innerHTML = `<img src="${e.target.result}"><button class="btn-del-photo" onclick="this.parentElement.remove()">X</button>`;
-                    document.getElementById('photo-container').appendChild(div);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-    }
-
-    // --- 4. SAUVEGARDE & MISES À JOUR ---
-    function saveData() {
-        const nomClient = document.getElementById('c_nom').value.trim();
-        
-        // SECURITE : Bloquer si pas de nom
-        if(!nomClient) {
-            alert("⚠️ Veuillez saisir le Nom du Client avant d'enregistrer.");
-            switchTab('tab-client', document.querySelectorAll('.tab-btn')[0]);
-            document.getElementById('c_nom').focus();
-            return;
-        }
-
-        const record = {
-            nom: nomClient,
-            date: document.getElementById('c_date_v').value || new Date().toLocaleDateString(),
-            fields: {},
-            tasks: Array.from(document.querySelectorAll('.work-item')).map(it => ({
-                type: it.querySelector('.t-type').value, fin: it.querySelector('.t-fin').value,
-                qty: it.querySelector('.t-qty').value, unit: it.querySelector('.t-unit').value
-            })),
-            plan: Array.from(document.querySelectorAll('.map-obj')).map(it => ({
-                cls: it.classList[1],
-                content: it.classList.contains('style-text') ? it.innerText : it.querySelector('.obj-emoji')?.innerHTML || "",
-                label: it.querySelector('.obj-label')?.innerText || "",
-                w: it.style.width, h: it.style.height, t: it.style.top, l: it.style.left, rot: it.style.transform,
-                fs: it.querySelector('.obj-emoji')?.style.fontSize || ""
-            })),
-            photos: Array.from(document.querySelectorAll('.photo-item img')).map(img => img.src)
-        };
-        
-        document.querySelectorAll('input, select, textarea').forEach(i => { if(i.id && i.type!=='file') record.fields[i.id] = i.value; });
-        
-        try {
-            let db = JSON.parse(localStorage.getItem('mapou_v15') || "[]");
-            
-            // MISE A JOUR OU NOUVELLE FICHE
-            if (currentChantierId) {
-                const index = db.findIndex(c => c.id === currentChantierId);
-                if (index > -1) {
-                    record.id = currentChantierId;
-                    db[index] = record;
-                } else {
-                    record.id = Date.now();
-                    currentChantierId = record.id;
-                    db.push(record);
-                }
-            } else {
-                record.id = Date.now();
-                currentChantierId = record.id;
-                db.push(record);
-            }
-
-            localStorage.setItem('mapou_v15', JSON.stringify(db));
-            alert("✅ Fiche de " + nomClient + " sauvegardée avec succès !");
-            displayArchives(); // Actualise la liste derrière
-        } catch(e) {
-            alert("⚠️ Erreur : Trop de photos pour la sauvegarde interne. Supprimez quelques photos ou compressez-les.");
-        }
-    }
-
-    function displayArchives() {
-        const list = document.getElementById('archive-list'); list.innerHTML = "";
-        const db = JSON.parse(localStorage.getItem('mapou_v15') || "[]");
-        db.reverse().forEach(c => {
-            const div = document.createElement('div');
-            div.style = "padding:12px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; background:white; margin-bottom:5px; border-radius:4px;";
-            // Ajout des boutons Ouvrir ET Supprimer
-            div.innerHTML = `
-                <span><strong>${c.nom}</strong> <br><span style="font-size:0.8em; color:#666;">${c.date}</span></span> 
-                <div style="display:flex; gap:8px;">
-                    <button onclick="loadChantier(${c.id})" style="background:var(--gold); color:var(--dark-green); border:none; padding:8px 15px; border-radius:4px; font-weight:bold; cursor:pointer;">Ouvrir</button>
-                    <button onclick="deleteChantier(${c.id})" style="background:#d32f2f; color:white; border:none; padding:8px 12px; border-radius:4px; font-weight:bold; cursor:pointer;">X</button>
+        <div class="bg-blue-50 p-4 rounded-lg mb-8 border border-blue-200 shadow-sm">
+            <h3 class="font-bold text-blue-800 mb-3 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" /></svg>
+                Mes fiches clients (sur cet appareil)
+            </h3>
+            <div class="flex flex-col md:flex-row gap-3">
+                <select id="listeSauvegardes" class="flex-grow p-2 border border-blue-300 rounded shadow-sm">
+                    <option value="">-- Sélectionner un client enregistré --</option>
+                </select>
+                <div class="flex gap-2">
+                    <button type="button" onclick="chargerFicheLocale()" class="px-4 py-2 bg-blue-600 text-white font-bold rounded shadow hover:bg-blue-700">Ouvrir</button>
+                    <button type="button" onclick="supprimerFicheLocale()" class="px-4 py-2 bg-red-100 text-red-700 font-bold rounded shadow hover:bg-red-200 border border-red-300">Supprimer</button>
                 </div>
-            `;
-            list.appendChild(div);
+            </div>
+            <p class="text-xs text-blue-600 mt-2 italic">Les fiches sont sauvegardées directement dans la mémoire de cette application.</p>
+        </div>
+
+        <form id="chantierForm" class="space-y-8">
+
+            <section>
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 bg-gray-100 p-2 rounded">1. Informations Client</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-red-600">Nom & Prénom du Client (Obligatoire pour sauvegarder)*</label>
+                        <input type="text" name="client_nom" id="client_nom" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2 ring-2 ring-red-100" required placeholder="Ex: Dupont Jean">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Téléphone</label>
+                        <input type="tel" name="client_tel" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium">Courriel</label>
+                        <input type="email" name="client_email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Date de visite</label>
+                        <input type="date" name="date_visite" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Date de chantier souhaitée</label>
+                        <input type="date" name="date_chantier" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium">Adresse postale</label>
+                        <input type="text" name="client_adresse" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium">Stationnement</label>
+                        <select name="stationnement" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                            <option value="">Sélectionner...</option>
+                            <option value="Facile/Devant">Facile / Devant</option>
+                            <option value="Difficile/rue Etroite">Difficile / Rue Étroite</option>
+                            <option value="éloigné >20m">Éloigné > 20m</option>
+                            <option value="Parking/Garage">Parking / Garage</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Passage</label>
+                        <select name="passage" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                            <option value="">Sélectionner...</option>
+                            <option value="Libre">Libre</option>
+                            <option value="Standard/Portail">Standard / Portail</option>
+                            <option value="Etroit/Porte">Étroit / Porte</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium">Réseaux (Cochez si présents)</label>
+                        <div class="mt-2 space-x-4">
+                            <label class="inline-flex items-center"><input type="checkbox" name="reseaux" value="Câbles/Tuyauterie" class="rounded border-gray-300 text-green-600 shadow-sm"> <span class="ml-2">Câbles / Tuyauterie</span></label>
+                            <label class="inline-flex items-center"><input type="checkbox" name="reseaux" value="Regard" class="rounded border-gray-300 text-green-600 shadow-sm"> <span class="ml-2">Regard / Sortie visible</span></label>
+                            <label class="inline-flex items-center"><input type="checkbox" name="reseaux" value="Arrosage" class="rounded border-gray-300 text-green-600 shadow-sm"> <span class="ml-2">Arrosage</span></label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 bg-gray-100 p-2 rounded">2. Doléances & Contrat</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium">Type de Contrat</label>
+                        <select name="contrat" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                            <option value="">Sélectionner...</option>
+                            <option value="Ponctuel">Ponctuel</option>
+                            <option value="Quinzomadaire/Trihebdomadaire">Quinzomadaire / Trihebdomadaire</option>
+                            <option value="Mensuel">Mensuel</option>
+                            <option value="Bimestriel">Bimestriel</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Préférence planning</label>
+                        <input type="text" name="pref_planning" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium">Notes & Doléances</label>
+                        <textarea name="notes_doleances" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 bg-gray-100 p-2 rounded">3. Plan du Chantier</h2>
+                <p class="text-sm text-gray-600 mb-2">Utilisez les outils à gauche pour dessiner. <strong>L'outil Ligne 〰️ sert de règle</strong>.</p>
+                
+                <div class="flex flex-col sm:flex-row gap-3 mb-3 justify-between items-start sm:items-center">
+                    <div class="flex gap-3 bg-gray-50 p-2 rounded border inline-flex">
+                        <span class="text-sm font-medium text-gray-700 my-auto mr-2">Couleur :</span>
+                        <button type="button" onclick="changerCouleur('#22c55e', this)" class="color-btn w-8 h-8 rounded-full bg-green-500 border-4 border-gray-800 shadow"></button>
+                        <button type="button" onclick="changerCouleur('#8b4513', this)" class="color-btn w-8 h-8 rounded-full bg-[saddlebrown] border-4 border-transparent hover:border-gray-400 shadow"></button>
+                        <button type="button" onclick="changerCouleur('#3b82f6', this)" class="color-btn w-8 h-8 rounded-full bg-blue-500 border-4 border-transparent hover:border-gray-400 shadow"></button>
+                        <button type="button" onclick="changerCouleur('#ef4444', this)" class="color-btn w-8 h-8 rounded-full bg-red-500 border-4 border-transparent hover:border-gray-400 shadow"></button>
+                        <button type="button" onclick="changerCouleur('#000000', this)" class="color-btn w-8 h-8 rounded-full bg-black border-4 border-transparent hover:border-gray-400 shadow"></button>
+                        <button type="button" onclick="changerCouleur('#6b7280', this)" class="color-btn w-8 h-8 rounded-full bg-gray-500 border-4 border-transparent hover:border-gray-400 shadow"></button>
+                    </div>
+
+                    <button type="button" onclick="centrerSurMoi()" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-bold rounded shadow hover:bg-blue-700 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                        </svg>
+                        Me localiser
+                    </button>
+                </div>
+
+                <div id="map" class="w-full h-[500px] rounded-lg border-2 border-gray-300 z-0 relative"></div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 bg-gray-100 p-2 rounded">4. Information Station (Terrain)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium">Topographie</label>
+                        <select name="topographie" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                            <option value="">Sélectionner...</option>
+                            <option value="Plat">Plat</option>
+                            <option value="Pente douce">Pente douce</option>
+                            <option value="Talus raide">Talus raide</option>
+                            <option value="Diversifié">Diversifié</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Texture du sol</label>
+                        <select name="texture_sol" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                            <option value="">Sélectionner...</option>
+                            <option value="Argileux">Argileux</option>
+                            <option value="Sableux">Sableux</option>
+                            <option value="Limoneux">Limoneux</option>
+                            <option value="Caillouteux">Caillouteux</option>
+                            <option value="Mélangé/Importé">Mélangé / Importé</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 bg-gray-100 p-2 rounded">5. Travaux à réaliser</h2>
+                
+                <div class="flex flex-col md:flex-row gap-4 mb-6 bg-green-50 p-4 rounded border border-green-200">
+                    <div class="flex-grow">
+                        <label class="block text-sm font-bold text-green-800 mb-1">Ajouter une catégorie de travaux :</label>
+                        <select id="selectCategorieTravaux" class="block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                            <option value="Taille">Taille</option>
+                            <option value="Tonte">Tonte / Débroussaillage</option>
+                            <option value="Nettoyage">Nettoyage</option>
+                            <option value="Creation">Création</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button type="button" onclick="ajouterBlocTravail()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 font-bold shadow transition">
+                            + Ajouter ces travaux
+                        </button>
+                    </div>
+                </div>
+
+                <div id="conteneurTravaux" class="space-y-4"></div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 bg-gray-100 p-2 rounded">6. Divers & Validation</h2>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium">Observations Diverses</label>
+                    <textarea name="observations_diverses" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2"></textarea>
+                </div>
+                
+                <div class="bg-blue-50 p-4 rounded border border-blue-200">
+                    <label class="block text-sm font-bold text-blue-800 mb-2">Signature / Validation du Client</label>
+                    <input type="text" name="signature_nom" placeholder="Taper le nom pour valider..." class="block w-full rounded-md border-gray-300 shadow-sm border p-2 mb-2">
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" name="accord_client" class="rounded border-gray-300 text-blue-600 shadow-sm h-5 w-5">
+                        <span class="ml-2 text-blue-800 font-medium">J'accepte et valide les informations saisies sur cette fiche.</span>
+                    </label>
+                </div>
+            </section>
+
+            <div class="flex flex-col sm:flex-row justify-end gap-4 border-t-2 pt-6 mt-6">
+                <button type="button" onclick="exporterFichier()" class="px-4 py-3 bg-gray-500 text-white text-sm rounded hover:bg-gray-600 font-medium shadow w-full sm:w-auto">
+                    ⬇️ Exporter un fichier de secours
+                </button>
+                
+                <button type="button" onclick="sauvegarderClient()" class="px-6 py-4 bg-green-600 text-white text-xl rounded-lg hover:bg-green-700 font-bold shadow-lg w-full sm:w-auto flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                    Sauvegarder le client
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        // --- 1. INITIALISATION DE LA CARTE ---
+        const map = L.map('map').setView([15.9963, -61.7196], 18);
+
+        L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            attribution: '© Google',
+            maxNativeZoom: 19,
+            maxZoom: 24
+        }).addTo(map);
+
+        map.pm.setLang('fr');
+        map.pm.addControls({
+            position: 'topleft',
+            drawMarker: false,       
+            drawCircleMarker: false, 
+            drawPolyline: true,      // Règle
+            drawRectangle: true,     
+            drawPolygon: true,       
+            drawCircle: true,        
+            drawText: false,         
+            editMode: true,          
+            dragMode: true,          
+            cutPolygon: false,       
+            removalMode: true        
         });
-    }
 
-    function loadChantier(id) {
-        const db = JSON.parse(localStorage.getItem('mapou_v15') || "[]");
-        const c = db.find(x => x.id === id); if(!c) return;
-        
-        // On lie l'ID pour que la prochaine sauvegarde mette à jour ce fichier
-        currentChantierId = c.id;
-
-        for(let k in c.fields) if(document.getElementById(k)) document.getElementById(k).value = c.fields[k];
-        document.getElementById('tasks-list').innerHTML = "";
-        c.tasks.forEach(t => addTask(t));
-        canvas.innerHTML = '';
-        c.plan.forEach(p => addMapObj(p.cls, p.content, p.label, p));
-        
-        const pc = document.getElementById('photo-container'); pc.innerHTML = "";
-        if(c.photos) c.photos.forEach(src => {
-            const div = document.createElement('div'); div.className = 'photo-item';
-            div.innerHTML = `<img src="${src}"><button class="btn-del-photo" onclick="this.parentElement.remove()">X</button>`;
-            pc.appendChild(div);
+        map.pm.setGlobalOptions({
+            measurements: { measurement: true, displayFormat: 'metric' }
         });
-        switchTab('tab-client', document.querySelector('.tab-btn'));
-    }
 
-    function nouveauChantier() {
-        if(confirm("Commencer un nouveau chantier ? (Pensez à sauvegarder le travail en cours avant)")) {
-            currentChantierId = null; // Déconnecte la mise à jour
-            
-            // Vide les champs texte
-            document.querySelectorAll('input[type="text"], input[type="tel"], input[type="number"], textarea').forEach(el => el.value = '');
-            document.getElementById('c_date_v').valueAsDate = new Date();
-            document.getElementById('c_date_c').value = '';
-            
-            // Vide les zones dynamiques
-            document.getElementById('tasks-list').innerHTML = '';
-            document.getElementById('canvas-area').innerHTML = '';
-            document.getElementById('photo-container').innerHTML = '';
-            
-            addTask();
-            switchTab('tab-client', document.querySelectorAll('.tab-btn')[0]);
+        let currentDrawColor = '#22c55e';
+        map.pm.setPathOptions({ color: currentDrawColor, fillColor: currentDrawColor, fillOpacity: 0.4, weight: 3 });
+
+        function changerCouleur(couleur, btnElement) {
+            currentDrawColor = couleur;
+            map.pm.setPathOptions({ color: currentDrawColor, fillColor: currentDrawColor, fillOpacity: 0.4, weight: 3 });
+            document.querySelectorAll('.color-btn').forEach(btn => {
+                btn.classList.remove('border-gray-800');
+                btn.classList.add('border-transparent');
+            });
+            btnElement.classList.remove('border-transparent');
+            btnElement.classList.add('border-gray-800');
         }
-    }
 
-    function deleteChantier(id) {
-        if(confirm("Supprimer définitivement ce dossier client ?")) {
-            let db = JSON.parse(localStorage.getItem('mapou_v15') || "[]");
-            db = db.filter(c => c.id !== id);
-            localStorage.setItem('mapou_v15', JSON.stringify(db));
-            
-            if(currentChantierId === id) currentChantierId = null; // Sécurité si le fichier ouvert est supprimé
-            
-            displayArchives();
-        }
-    }
-
-    function exportBackup() {
-        const data = localStorage.getItem('mapou_v15') || "[]";
-        const blob = new Blob([data], {type: "application/json"});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = `backup_mapou_${new Date().toISOString().slice(0,10)}.json`; a.click();
-    }
-
-    function importBackup(input) {
-        const file = input.files[0]; if(!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            if(confirm("⚠️ Attention : Écraser toutes les données de l'iPad avec ce backup ?")) {
-                localStorage.setItem('mapou_v15', e.target.result);
-                displayArchives(); alert("Restauration réussie !");
+        function centrerSurMoi() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) { map.flyTo([position.coords.latitude, position.coords.longitude], 21); }, 
+                    function(error) { alert("Activez le GPS de votre appareil pour utiliser cette fonction."); },
+                    { enableHighAccuracy: true }
+                );
             }
-        };
-        reader.readAsText(file);
-    }
+        }
 
-    document.getElementById('c_date_v').valueAsDate = new Date();
-    addTask();
-</script>
+        // --- 2. TRAVAUX DYNAMIQUES ---
+        const donneesTravaux = {
+            'Taille': { titre: 'Taille', options: ['Architecturée', 'Douce', 'Rabattage', 'Fruitière', 'Remontée', 'Formation', 'Eclaircie'], unites: ['m2', 'm3', 'diamètre', 'm de haut', 'unité'] },
+            'Tonte': { titre: 'Tonte / Débroussaillage', options: ['Avec ramassage', 'Mulching', 'Prestige', 'Fauchage', 'Passage', 'Défrichage'], unites: ['m2', 'à raz', 'relance de pelouse'] },
+            'Nettoyage': { titre: 'Nettoyage', options: ['Eclaircie', 'Nettoiement', 'Désherbage', 'Rhyzome', 'Grimpantes'], unites: ['m2', 'm linéaire', 'm de haut'] },
+            'Creation': { titre: 'Création', options: ['Plantation', 'Aménagement Bois', 'Aménagement Pierre', 'Artificialisation', 'Concept', 'Conception & Réalisation', 'Réalisation', 'Engazonnement', 'Maçonnerie'], unites: ['m2', 'forfait', 'm linéaire'] }
+        };
+
+        function ajouterBlocTravail() {
+            const select = document.getElementById('selectCategorieTravaux');
+            const config = donneesTravaux[select.value];
+            const divBloc = document.createElement('div');
+            divBloc.className = 'bloc-travail border-l-4 border-green-500 bg-white shadow p-4 rounded relative mb-4';
+            divBloc.dataset.categorie = config.titre;
+
+            let htmlOptions = '<div class="flex flex-wrap gap-4 mb-4 mt-2">';
+            config.options.forEach(opt => {
+                htmlOptions += `<label class="inline-flex items-center cursor-pointer"><input type="checkbox" value="${opt}" class="travail-option rounded text-green-600 w-4 h-4"><span class="ml-2 text-sm">${opt}</span></label>`;
+            });
+            htmlOptions += '</div>';
+
+            let htmlQuantite = `<div class="flex items-center gap-3 bg-gray-50 p-2 rounded inline-flex border flex-wrap"><input type="number" placeholder="Quantité" class="travail-qte border p-1 rounded w-32 text-sm"><select class="travail-unite border p-1 rounded text-sm"><option value="">-- Unité --</option>`;
+            config.unites.forEach(u => htmlQuantite += `<option value="${u}">${u}</option>`);
+            htmlQuantite += `</select></div>`;
+
+            divBloc.innerHTML = `<button type="button" onclick="this.closest('.bloc-travail').remove()" class="absolute top-2 right-2 text-red-500 hover:text-red-700 text-sm bg-red-100 px-2 py-1 rounded">X</button> <h3 class="font-bold text-lg text-green-800 border-b pb-1 inline-block pr-4">${config.titre}</h3> ${htmlOptions} ${htmlQuantite}`;
+            document.getElementById('conteneurTravaux').appendChild(divBloc);
+        }
+
+        // --- 3. GESTION DES DONNÉES (RÉCUPÉRATION) ---
+        function recupererDonneesFormulaire() {
+            const formData = new FormData(document.getElementById('chantierForm'));
+            const data = { infos_generales: {}, travaux: [], plan_geographique: null };
+
+            for (let [key, value] of formData.entries()) {
+                if (data.infos_generales[key]) {
+                    if (!Array.isArray(data.infos_generales[key])) data.infos_generales[key] = [data.infos_generales[key]];
+                    data.infos_generales[key].push(value);
+                } else { data.infos_generales[key] = value; }
+            }
+
+            document.querySelectorAll('.bloc-travail').forEach(bloc => {
+                const optionsCochees = Array.from(bloc.querySelectorAll('.travail-option:checked')).map(cb => cb.value);
+                const quantite = bloc.querySelector('.travail-qte').value;
+                if (optionsCochees.length > 0 || quantite !== "") {
+                    data.travaux.push({ categorie: bloc.dataset.categorie, options_selectionnees: optionsCochees, quantite: quantite, unite: bloc.querySelector('.travail-unite').value });
+                }
+            });
+
+            const geojsonFeatures = [];
+            map.pm.getGeomanDrawLayers().forEach(layer => {
+                const geojson = layer.toGeoJSON();
+                geojson.properties.color = layer.options.color || '#22c55e';
+                if(layer instanceof L.Circle) { geojson.properties.radius = layer.getRadius(); geojson.properties.type = "Circle"; }
+                geojsonFeatures.push(geojson);
+            });
+            if (geojsonFeatures.length > 0) data.plan_geographique = { type: "FeatureCollection", features: geojsonFeatures };
+
+            return data;
+        }
+
+        // --- 4. LE CŒUR DU SYSTÈME : SAUVEGARDE INTERNE (LOCALSTORAGE) ---
+        function sauvegarderClient() {
+            const nomInput = document.getElementById('client_nom');
+            if(!nomInput.value.trim()) {
+                alert("⚠️ Attention : Vous devez absolument écrire le 'Nom & Prénom' du client (dans la case encadrée en rouge) pour pouvoir enregistrer la fiche.");
+                nomInput.focus();
+                return;
+            }
+
+            // Récupère toutes les données
+            const data = recupererDonneesFormulaire();
+            const nomClient = nomInput.value.trim();
+            const cleSauvegarde = 'Chantier_' + nomClient;
+
+            // Sauvegarde dans la mémoire du navigateur de l'iPad
+            localStorage.setItem(cleSauvegarde, JSON.stringify(data));
+            
+            // Met à jour la liste en haut de l'écran
+            actualiserListeSauvegardes();
+
+            alert("✅ Succès ! La fiche de " + nomClient + " a été sauvegardée dans l'application.");
+        }
+
+        function actualiserListeSauvegardes() {
+            const select = document.getElementById('listeSauvegardes');
+            select.innerHTML = '<option value="">-- Sélectionner un client enregistré --</option>'; // Remise à zéro
+            
+            // Cherche toutes les fiches sauvegardées
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('Chantier_')) {
+                    const nomClient = key.replace('Chantier_', '');
+                    const option = document.createElement('option');
+                    option.value = key;
+                    option.textContent = nomClient;
+                    select.appendChild(option);
+                }
+            }
+        }
+
+        function chargerFicheLocale() {
+            const select = document.getElementById('listeSauvegardes');
+            const cle = select.value;
+            if(!cle) { alert("Veuillez sélectionner un client dans la liste."); return; }
+
+            const jsonString = localStorage.getItem(cle);
+            if(jsonString) {
+                const data = JSON.parse(jsonString);
+                remplirFormulaireAvecDonnees(data);
+                alert("📂 La fiche de " + cle.replace('Chantier_', '') + " est ouverte !");
+            }
+        }
+
+        function supprimerFicheLocale() {
+            const select = document.getElementById('listeSauvegardes');
+            const cle = select.value;
+            if(!cle) return;
+
+            if(confirm("Êtes-vous sûr de vouloir supprimer définitivement la fiche de " + cle.replace('Chantier_', '') + " de cet appareil ?")) {
+                localStorage.removeItem(cle);
+                actualiserListeSauvegardes();
+                document.getElementById('chantierForm').reset(); // Vide le formulaire
+                document.getElementById('conteneurTravaux').innerHTML = ''; // Vide les travaux
+                map.pm.getGeomanDrawLayers().forEach(layer => map.removeLayer(layer)); // Vide la carte
+            }
+        }
+
+        // --- 5. FONCTION POUR REMPLIR LE FORMULAIRE À L'ÉCRAN ---
+        function remplirFormulaireAvecDonnees(data) {
+            // Nettoyage préalable
+            document.getElementById('chantierForm').reset();
+            document.getElementById('conteneurTravaux').innerHTML = '';
+            map.pm.getGeomanDrawLayers().forEach(layer => map.removeLayer(layer));
+
+            // A. Infos générales
+            for (let key in data.infos_generales) {
+                const elements = document.getElementsByName(key);
+                if (elements.length > 0) {
+                    if (elements[0].type === 'checkbox' || elements[0].type === 'radio') {
+                        const values = Array.isArray(data.infos_generales[key]) ? data.infos_generales[key] : [data.infos_generales[key]];
+                        elements.forEach(el => el.checked = values.includes(el.value));
+                    } else { elements[0].value = data.infos_generales[key]; }
+                }
+            }
+
+            // B. Travaux
+            if (data.travaux) {
+                data.travaux.forEach(t => {
+                    let catKey = Object.keys(donneesTravaux).find(k => donneesTravaux[k].titre === t.categorie);
+                    if(catKey) {
+                        document.getElementById('selectCategorieTravaux').value = catKey;
+                        ajouterBlocTravail();
+                        const blocs = document.querySelectorAll('.bloc-travail');
+                        const lastBloc = blocs[blocs.length - 1];
+                        t.options_selectionnees.forEach(opt => {
+                            const cb = Array.from(lastBloc.querySelectorAll('.travail-option')).find(c => c.value === opt);
+                            if(cb) cb.checked = true;
+                        });
+                        lastBloc.querySelector('.travail-qte').value = t.quantite || '';
+                        lastBloc.querySelector('.travail-unite').value = t.unite || '';
+                    }
+                });
+            }
+
+            // C. Carte
+            if (data.plan_geographique) {
+                L.geoJSON(data.plan_geographique, {
+                    style: function(feature) { return { color: feature.properties.color || '#22c55e', fillColor: feature.properties.color || '#22c55e', fillOpacity: 0.4, weight: 3 }; },
+                    pointToLayer: function(feature, latlng) {
+                        if (feature.properties.type === "Circle" && feature.properties.radius) return L.circle(latlng, {radius: feature.properties.radius});
+                        return L.marker(latlng);
+                    },
+                    onEachFeature: function(feature, layer) {
+                        layer.options.color = feature.properties.color;
+                        layer.options.fillColor = feature.properties.color;
+                    }
+                }).addTo(map);
+            }
+        }
+
+        // --- 6. EXPORT DE SECOURS (FICHIER PHYSIQUE) ---
+        function exporterFichier() {
+            const nomInput = document.getElementById('client_nom');
+            if(!nomInput.value.trim()) { alert("Remplissez le nom du client avant d'exporter."); return; }
+            
+            const data = recupererDonneesFormulaire();
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            const nomFichier = data.infos_generales.client_nom.replace(/\s+/g, '_');
+            const dateFichier = new Date().toISOString().split('T')[0];
+            downloadAnchorNode.setAttribute("download", `Chantier_${nomFichier}_${dateFichier}.json`);
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+    </script>
 </body>
 </html>
